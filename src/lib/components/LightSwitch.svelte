@@ -27,13 +27,18 @@
   let pulled = $state(false);
   let blackoutElement: HTMLDivElement | undefined = $state();
 
-  // Easter egg: clicking the lit bulb chips it — the third crack shatters the
-  // globe: a white pop, then glass shards scatter and rain down.
+  // Easter egg: clicking the lit bulb chips it. Each tap drives a fresh spider
+  // crack into the glass (jagged, branching, drawn in ~a tenth of a second),
+  // and the third tap shatters the globe for real — a white pop, then glass
+  // chunks burst out and rain down the screen.
   let cracks = $state(0);
   let broken = $derived(cracks >= 3);
 
-  let shardsGroup: SVGGElement | undefined = $state();
-  let flashEl: SVGCircleElement | undefined = $state();
+  let crackPaths = $state<string[]>([]);
+
+  let globeEl: SVGCircleElement | undefined = $state();
+  let bulbSwayEl: HTMLDivElement | undefined = $state();
+  let shardLayer: HTMLDivElement | undefined = $state();
 
   let title = $derived(
     isDark
@@ -125,68 +130,220 @@
   function onBulbClick() {
     if (!isDark || broken) return;
     cracks += 1;
-    if (cracks === 3) shatter();
+    if (cracks === 3) {
+      shatter();
+      return;
+    }
+    // Each tap lands somewhere new on the glass and webs out from there.
+    const [ix, iy] = impactPoint(50, 128, 23);
+    crackPaths = [...crackPaths, ...crackBatch(ix, iy, 23)];
   }
 
-  // Outward flight vector (viewBox units) per shard, roughly radial from the
-  // globe centre (50,128); the "+60" in the end keyframe is the gravity drop.
-  const SHARD_FLIGHT: [number, number][] = [
-    [-4, 26],
-    [-26, 22],
-    [-40, 12],
-    [-34, 44],
-    [-16, 58],
-    [0, 64],
-    [18, 58],
-    [40, 20],
-    [30, 26],
-    [10, 30],
+  // ------------------------------------------------------------------
+  // Procedural glass cracks — jagged, branching webs from a tapped point.
+  // ------------------------------------------------------------------
+  function rnd(a: number, b: number) {
+    return a + Math.random() * (b - a);
+  }
+
+  function impactPoint(cx: number, cy: number, r: number): [number, number] {
+    const a = rnd(0, Math.PI * 2);
+    const d = rnd(2, r * 0.38);
+    return [cx + Math.cos(a) * d, cy + Math.sin(a) * d];
+  }
+
+  function crackLine(ix: number, iy: number, angle: number, length: number): string {
+    const segs = 5 + Math.floor(Math.random() * 4);
+    const dx = Math.cos(angle);
+    const dy = Math.sin(angle);
+    const pts: string[] = [`M${ix.toFixed(1)} ${iy.toFixed(1)}`];
+    let px = ix;
+    let py = iy;
+    for (let i = 1; i <= segs; i++) {
+      const t = i / segs;
+      px += dx * (length / segs);
+      py += dy * (length / segs);
+      const wob = (Math.random() - 0.5) * (1.5 + t * 9); // wander widens outward
+      pts.push(`${(px - dy * wob).toFixed(1)} ${(py + dx * wob).toFixed(1)}`);
+    }
+    return pts.join(" L");
+  }
+
+  function crackBatch(ix: number, iy: number, r: number): string[] {
+    const out: string[] = [];
+    // Dense little crater right at the tap point.
+    const crater = 4 + Math.floor(Math.random() * 3);
+    for (let i = 0; i < crater; i++) {
+      out.push(crackLine(ix, iy, rnd(0, Math.PI * 2), rnd(2.5, 7)));
+    }
+    // Main radial cracks, some reaching the rim.
+    const mains = 5 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < mains; i++) {
+      const a = (i / mains) * Math.PI * 2 + rnd(-0.3, 0.3);
+      const len = rnd(r * 0.5, r * 0.82);
+      out.push(crackLine(ix, iy, a, len));
+      if (Math.random() < 0.55) {
+        const frac = rnd(0.35, 0.72);
+        const bx = ix + Math.cos(a) * len * frac;
+        const by = iy + Math.sin(a) * len * frac;
+        const ba = a + rnd(0.5, 1.15) * (Math.random() < 0.5 ? 1 : -1);
+        out.push(crackLine(bx, by, ba, rnd(r * 0.2, r * 0.45)));
+      }
+    }
+    return out;
+  }
+
+  // ------------------------------------------------------------------
+  // Shatter — screen-space glass that really rains down.
+  // ------------------------------------------------------------------
+  type Shard = {
+    el: HTMLDivElement;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    rot: number;
+    vrot: number;
+    size: number;
+    resting: number;
+    born: number;
+  };
+
+  const SHARD_POLYS = [
+    "50% 0, 96% 28%, 72% 100%, 14% 78%",
+    "30% 0, 100% 22%, 78% 100%, 6% 82%",
+    "48% 0, 100% 38%, 62% 100%, 0 60%",
+    "22% 0, 88% 0, 100% 72%, 40% 100%",
+    "50% 4%, 92% 44%, 60% 100%, 8% 72%",
+    "12% 0, 100% 30%, 70% 96%, 0 60%",
+    "52% 0, 100% 56%, 44% 100%, 0 36%",
   ];
 
+  let shards: Shard[] = [];
+  let shardRaf = 0;
+  let shardLastT = 0;
+
   function shatter() {
-    if (!shardsGroup) return;
+    if (!globeEl || !shardLayer) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    flashEl?.animate(
+
+    const rect = globeEl.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    // A violent jitter for a beat — the flash hides the pop.
+    bulbSwayEl?.classList.add("boom");
+    window.setTimeout(() => bulbSwayEl?.classList.remove("boom"), 330);
+
+    // White pop at the break point.
+    const flash = document.createElement("div");
+    flash.className = "light-flash";
+    flash.style.left = `${cx - 34}px`;
+    flash.style.top = `${cy - 34}px`;
+    shardLayer.appendChild(flash);
+    flash.animate(
       [
-        { transform: "scale(1)", opacity: 0.95 },
-        { transform: "scale(2.6)", opacity: 0 },
+        { transform: "scale(0.4)", opacity: 0.95 },
+        { transform: "scale(1.7)", opacity: 0 },
       ],
-      { duration: 320, easing: "ease-out", fill: "forwards" },
+      { duration: 340, easing: "cubic-bezier(0.1, 0.8, 0.3, 1)", fill: "forwards" },
     );
-    const shards = shardsGroup.querySelectorAll(".bulb-shard");
-    shards.forEach((shard, i) => {
-      const [fx, fy] = SHARD_FLIGHT[i] ?? [0, 40];
-      const rot = (Math.random() - 0.5) * 300;
-      const delay = Math.random() * 140;
-      const duration = 720 + Math.random() * 320;
-      shard.animate(
-        [
-          { transform: "translate(0,0) rotate(0)", opacity: 1, offset: 0 },
-          {
-            transform: `translate(${(fx * 0.55).toFixed(1)}, ${(-12 + fy * 0.25).toFixed(1)}) rotate(${(rot * 0.5).toFixed(1)}deg)`,
-            opacity: 1,
-            offset: 0.45,
-          },
-          {
-            transform: `translate(${fx}, ${(fy + 60).toFixed(1)}) rotate(${rot.toFixed(1)}deg)`,
-            opacity: 0,
-            offset: 1,
-          },
-        ],
-        {
-          duration,
-          delay,
-          easing: "cubic-bezier(0.22, 0.9, 0.35, 1)",
-          fill: "forwards",
-        },
-      );
-    });
+    window.setTimeout(() => flash.remove(), 380);
+
+    // Glass chunks burst outward, then gravity takes them to the floor.
+    for (let i = 0; i < 24; i++) {
+      const size = 7 + Math.random() * 11;
+      const el = document.createElement("div");
+      el.className = "light-shard";
+      el.style.width = `${size}px`;
+      el.style.height = `${(size * (0.8 + Math.random() * 0.6)).toFixed(1)}px`;
+      el.style.clipPath = `polygon(${SHARD_POLYS[i % SHARD_POLYS.length]})`;
+      shardLayer.appendChild(el);
+      const ang = Math.random() * Math.PI * 2;
+      const speed = 60 + Math.random() * 210;
+      shards.push({
+        el,
+        x: cx - size / 2,
+        y: cy - size / 2,
+        vx: Math.cos(ang) * speed,
+        vy: Math.sin(ang) * speed * 0.7 - 60 - Math.random() * 130,
+        rot: Math.random() * 360,
+        vrot: (Math.random() - 0.5) * 720,
+        size,
+        resting: 0,
+        born: performance.now(),
+      });
+    }
+
+    if (!shardRaf) {
+      shardLastT = 0;
+      shardRaf = requestAnimationFrame(shardStep);
+    }
   }
 
-  // A fresh bulb next time: cancel any in-flight shard/flash animations so the
-  // pieces snap back to rest (fill:forwards only persists while running).
+  function shardStep(now: number) {
+    const dt = shardLastT ? Math.min(0.04, (now - shardLastT) / 1000) : 0.016;
+    shardLastT = now;
+    const GRAVITY = 1500;
+    const FLOOR = window.innerHeight - 8;
+
+    shards = shards.filter((s) => s.el.isConnected);
+    for (const s of shards) {
+      s.vy += GRAVITY * dt;
+      s.vx *= Math.exp(-0.3 * dt);
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.rot += s.vrot * dt;
+
+      if (s.y + s.size >= FLOOR && s.vy > 0) {
+        s.y = FLOOR - s.size;
+        s.vy = -s.vy * (0.32 + Math.random() * 0.12);
+        s.vx *= 0.68;
+        s.vrot *= 0.6;
+      }
+
+      if (s.y + s.size >= FLOOR - 1 && Math.abs(s.vy) < 14) {
+        s.resting += dt;
+      } else {
+        s.resting = 0;
+      }
+
+      let opacity = 1;
+      if (s.resting > 0.85) {
+        const f = Math.min(1, (s.resting - 0.85) / 0.65);
+        opacity = 1 - f;
+        if (f >= 1) {
+          s.el.remove();
+          continue;
+        }
+      } else if (performance.now() - s.born > 4600) {
+        s.el.remove();
+        continue;
+      }
+
+      s.el.style.transform = `translate(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px) rotate(${s.rot.toFixed(1)}deg)`;
+      s.el.style.opacity = opacity.toFixed(2);
+    }
+    shards = shards.filter((s) => s.el.isConnected);
+
+    if (shards.length > 0) {
+      shardRaf = requestAnimationFrame(shardStep);
+    } else {
+      shardRaf = 0;
+    }
+  }
+
+  // A fresh bulb next time: sweep up leftover shards/flash and old cracks.
   function resetShards() {
-    shardsGroup?.getAnimations().forEach((animation) => animation.cancel());
+    shardLayer
+      ?.querySelectorAll(".light-shard, .light-flash")
+      .forEach((el) => el.remove());
+    shards = [];
+    crackPaths = [];
+    if (shardRaf) {
+      cancelAnimationFrame(shardRaf);
+      shardRaf = 0;
+    }
   }
 </script>
 
@@ -204,7 +361,7 @@
   class:broken={broken}
   aria-hidden="true"
 >
-  <div class="bulb-sway relative">
+  <div class="bulb-sway relative" bind:this={bulbSwayEl}>
     <div class="bulb-glow absolute"></div>
     <svg width="100" height="190" viewBox="0 0 100 190" fill="none" class="bulb-svg relative block">
       <defs>
@@ -227,29 +384,23 @@
       <!-- strain relief where the cable enters the housing -->
       <rect x="46" y="55" width="8" height="14" rx="4" class="bulb-cap" />
       <!-- frosted diffuser globe -->
-      <circle cx="50" cy="128" r="23" fill="url(#light-switch-diffuser)" class="bulb-glass" />
+      <circle
+        bind:this={globeEl}
+        cx="50"
+        cy="128"
+        r="23"
+        fill="url(#light-switch-diffuser)"
+        class="bulb-glass"
+      />
       <!-- dead-diffuser overlay, shown the instant the lamp switches off -->
       <circle cx="50" cy="128" r="23" class="bulb-glass-dead" />
       <!-- soft highlight on the globe -->
       <path d="M35.5 122 a17.5 17.5 0 0 1 7.5 -10.5" class="bulb-glint" />
-      <!-- cracks that accumulate as the lit bulb is clicked in dark mode -->
-      {#if cracks >= 1}<path d="M50 106 L45 113 L51 119 L46 128" class="bulb-crack" />{/if}
-      {#if cracks >= 2}<path d="M39 120 L44 125 L42 133 L48 138" class="bulb-crack" />{/if}
-      {#if cracks >= 3}<path d="M62 121 L55 126 L58 133 L51 135" class="bulb-crack" />{/if}
-      <!-- shatter pieces: flash + glass shards that fly off and rain down -->
-      <g bind:this={shardsGroup}>
-        <circle cx="50" cy="128" r="18" class="bulb-flash" />
-        <path d="M50 105 L42 110 L51 112 Z" class="bulb-shard" />
-        <path d="M42 110 L32 117 L39 123 Z" class="bulb-shard" />
-        <path d="M32 117 L27 128 L35 129 Z" class="bulb-shard" />
-        <path d="M27 128 L31 141 L38 135 Z" class="bulb-shard" />
-        <path d="M38 135 L42 150 L48 143 Z" class="bulb-shard" />
-        <path d="M48 143 L50 151 L55 144 Z" class="bulb-shard" />
-        <path d="M55 144 L58 150 L65 140 Z" class="bulb-shard" />
-        <path d="M65 140 L73 128 L65 128 Z" class="bulb-shard" />
-        <path d="M73 128 L68 117 L61 122 Z" class="bulb-shard" />
-        <path d="M61 122 L58 110 L52 112 Z" class="bulb-shard" />
-      </g>
+      <!-- cracks that accumulate as the lit bulb is clicked in dark mode —
+           procedural spider webs, each drawn in as it lands -->
+      {#each crackPaths as d, i (i)}
+        <path pathLength="1" d={d} class="bulb-crack" />
+      {/each}
       <!-- empty socket, revealed once the globe is gone -->
       <ellipse cx="50" cy="128" rx="22" ry="13" class="bulb-socket" />
       <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -324,6 +475,9 @@
     </svg>
   </button>
 </div>
+
+<!-- Shatter layer — screen-space glass chunks fall over the whole viewport -->
+<div bind:this={shardLayer} class="shatter-layer" aria-hidden="true"></div>
 
 <!-- Blackout curtain the flicker animations run on -->
 <div
@@ -573,36 +727,64 @@
 
   /* ---------------- cracked-bulb easter egg ---------------- */
 
+  /* Procedural spider cracks — drawn in over a beat via pathLength dash math.
+     `pathLength="1"` is set in the markup so 1 dash = the whole path. */
   .bulb-crack {
     fill: none;
     stroke: rgba(115, 100, 75, 0.8);
     stroke-width: 1.4;
     stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: bulb-crack-draw 0.16s ease-out forwards;
   }
   :global(.dark) .bulb-crack {
-    stroke: rgba(240, 225, 195, 0.7);
+    stroke: rgba(240, 225, 195, 0.8);
+  }
+  :global(.dark) .bulb-crack {
+    filter: drop-shadow(0 0 1.5px rgba(255, 235, 200, 0.4));
   }
 
-  /* Glass shards — hidden at rest, the shatter animation moves them */
-  .bulb-shard {
-    opacity: 0;
-    fill: #ffe3a3;
-    stroke: rgba(120, 90, 40, 0.18);
-    stroke-width: 0.6;
-    transform-box: fill-box;
-    transform-origin: center;
-  }
-  :global(.dark) .bulb-shard {
-    fill: #ffd98a;
-    stroke: rgba(255, 255, 255, 0.25);
+  @keyframes bulb-crack-draw {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
   }
 
-  /* White pop at the instant the globe breaks */
-  .bulb-flash {
-    opacity: 0;
-    fill: rgba(255, 243, 205, 0.95);
-    transform-box: fill-box;
-    transform-origin: center;
+  /* One violent jitter the instant the globe shatters — takes over the idle
+     sway for its brief duration. The `.boom` class is added from JS, hence
+     the global selector. */
+  :global(.bulb-sway.boom) {
+    animation: bulb-boom 300ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+
+  @keyframes bulb-boom {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    12% {
+      transform: rotate(-10deg) translateX(-2px);
+    }
+    28% {
+      transform: rotate(6deg) translateX(1px);
+    }
+    44% {
+      transform: rotate(-5deg);
+    }
+    58% {
+      transform: rotate(3deg);
+    }
+    72% {
+      transform: rotate(-1.5deg);
+    }
+    86% {
+      transform: rotate(0.6deg);
+    }
   }
 
   /* The empty socket left behind — dark opening where the globe sat */
@@ -634,6 +816,51 @@
   .bulb-root.broken .bulb-socket {
     opacity: 1;
   }
+
+  /* ---------------- shatter layer ---------------- */
+
+  .shatter-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 96;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* Glass chunks — amber frosted chips. Positions come entirely from the JS
+     physics; these are created dynamically, hence the global selectors. */
+  :global(.light-shard) {
+    position: absolute;
+    left: 0;
+    top: 0;
+    will-change: transform, opacity;
+    transform-origin: center;
+    background: linear-gradient(135deg, #fff3d6 0%, #ffd98c 40%, #ffb95e 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 220, 160, 0.5),
+      0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+  :global(.dark .light-shard) {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 235, 190, 0.65),
+      0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  /* White pop at the instant the globe breaks */
+  :global(.light-flash) {
+    position: absolute;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(255, 250, 225, 0.98) 0%,
+      rgba(255, 226, 150, 0.55) 45%,
+      transparent 72%
+    );
+    mix-blend-mode: screen;
+    will-change: transform, opacity;
+  }
   .lamp-warmth.broken {
     opacity: 0 !important;
     transition: none;
@@ -647,6 +874,11 @@
     }
     .bulb-root {
       transition: none !important;
+    }
+    /* Cracks still show, just without the draw-in sweep. */
+    .bulb-crack {
+      animation: none !important;
+      stroke-dashoffset: 0;
     }
   }
 </style>
