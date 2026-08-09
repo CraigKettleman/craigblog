@@ -9,12 +9,12 @@ This is the source code of my personal homepage.
 - [Svelte](https://svelte.dev) / [SvelteKit](https://svelte.dev/docs/kit)
 - [TailwindCSS](https://tailwindcss.com)
 - [Velite](https://velite.js.org)
-- [Cloudflare Workers](https://workers.cloudflare.com) via `@sveltejs/adapter-cloudflare`
+- [Node.js](https://nodejs.org) on a VPS via `@sveltejs/adapter-node`
 
-The whole site is prerendered at build time and served as static assets from
-Cloudflare's edge. Only two things run in the worker: the `Accept-Language`
-redirect for locale-less URLs, and the RSS feeds (cached with the Cloudflare
-Cache API).
+The whole site is prerendered at build time. A small Node server handles the
+`Accept-Language` redirect for locale-less URLs, the extensionless RSS feeds,
+and the `/api/social` stats endpoint. Deployment is automated by
+`deploy/deploy.sh` (rsync → systemd → nginx + Let's Encrypt).
 
 ## Content
 
@@ -29,5 +29,6 @@ Both blogs share one content pipeline (Velite):
 - `pnpm dev`: Start the local dev server.
 - `pnpm check`: Type-check the project.
 - `pnpm build`: Build the site (including prerendered pages and OG images).
-- `pnpm preview`: Build and preview locally in the Workers runtime.
-- `pnpm deploy`: Build and deploy to Cloudflare Workers.
+- `pnpm preview`: Build and run the Node build locally (`node build/index.js`).
+- `pnpm deploy`: Build and deploy to the VPS via `deploy/deploy.sh`
+  (rsync → systemd → nginx + Let's Encrypt).

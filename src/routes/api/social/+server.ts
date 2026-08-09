@@ -7,10 +7,9 @@ import {
 } from "$lib/social";
 import type { RequestHandler } from "./$types";
 
-// Live profile stats for the social hover cards. Served by the worker so
-// numbers stay fresh without rebuilding the prerendered site. Layered
-// caching keeps upstream traffic near zero: Cloudflare edge cache (per
-// colo) -> KV last-good snapshot (global) -> bundled fallback snapshot.
+// Live profile stats for the social hover cards. Served by the Node server
+// so numbers stay fresh without rebuilding the prerendered site. On upstream
+// failure it falls back to a committed snapshot (socialFallback).
 export const prerender = false;
 
 const GITHUB_HANDLE = "CraigKEttleman";
@@ -18,7 +17,6 @@ const X_HANDLE = "CraigKettlmgc8";
 /** Display name shown on the X card. Pinned to the user's stated account
  * name even though X's profile reports it with a space ("Craig Kettleman"). */
 const X_NAME = "CraigKettleman";
-const KV_KEY = "social-stats:v1";
 /** Days of contribution history to expose (18 weeks). */
 const HEATMAP_DAYS = 126;
 
@@ -154,16 +152,8 @@ async function fetchXProfile(): Promise<XStats> {
   };
 }
 
-export const GET: RequestHandler = async ({ request, platform }) => {
-  const cache = platform?.caches?.default;
-  const cached = await cache?.match(request.url);
-  if (cached) return cached;
-
-  const kv = platform?.env?.SOCIAL_CACHE;
-  const lastGood = (await kv
-    ?.get(KV_KEY, "json")
-    .catch(() => null)) as SocialStats | null;
-  const base = lastGood ?? socialFallback;
+export const GET: RequestHandler = async () => {
+  const base = socialFallback;
 
   const [profile, contributions, x] = await Promise.allSettled([
     fetchGitHubProfile(),
@@ -184,13 +174,9 @@ export const GET: RequestHandler = async ({ request, platform }) => {
     x: x.status === "fulfilled" ? x.value : base.x,
   };
 
-  if (anyFresh && kv) {
-    platform?.context?.waitUntil(kv.put(KV_KEY, JSON.stringify(stats)));
-  }
-
-  // Short client cache; the edge holds it longer. Upstream failures get a
-  // brief TTL so the next request retries soon.
-  const response = json(stats, {
+  // Short client cache. Upstream failures get a brief TTL so the next
+  // request retries soon.
+  return json(stats, {
     headers: {
       "Cache-Control": anyFresh
         ? "public, max-age=3600, s-maxage=14400"
@@ -198,10 +184,4 @@ export const GET: RequestHandler = async ({ request, platform }) => {
       "Access-Control-Allow-Origin": "*",
     },
   });
-
-  if (anyFresh && cache) {
-    platform?.context?.waitUntil(cache.put(request.url, response.clone()));
-  }
-
-  return response;
 };

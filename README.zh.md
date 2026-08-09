@@ -9,11 +9,11 @@
 - [Svelte](https://svelte.dev) / [SvelteKit](https://svelte.dev/docs/kit)
 - [TailwindCSS](https://tailwindcss.com)
 - [Velite](https://velite.js.org)
-- [Cloudflare Workers](https://workers.cloudflare.com)（通过 `@sveltejs/adapter-cloudflare`）
+- VPS 上的 [Node.js](https://nodejs.org)（通过 `@sveltejs/adapter-node`）
 
-整个站点在构建期预渲染，作为静态资源由 Cloudflare 边缘节点直接分发。Worker
-中只运行两件事：无语言前缀 URL 的 `Accept-Language` 重定向，以及 RSS
-订阅源（使用 Cloudflare Cache API 做边缘缓存）。
+整个站点在构建期预渲染。一个轻量 Node 服务负责无语言前缀 URL 的
+`Accept-Language` 重定向、无扩展名的 RSS 订阅源，以及 `/api/social` 统计接口。
+部署由 `deploy/deploy.sh` 自动化（rsync → systemd → nginx + Let's Encrypt）。
 
 ## 内容
 
@@ -28,5 +28,5 @@
 - `pnpm dev`：启动本地开发服务器。
 - `pnpm check`：类型检查。
 - `pnpm build`：构建站点（包含预渲染页面与 OG 图片）。
-- `pnpm preview`：构建并在本地 Workers 运行时中预览。
-- `pnpm deploy`：构建并部署到 Cloudflare Workers。
+- `pnpm preview`：构建并在本地运行 Node 产物（`node build/index.js`）。
+- `pnpm deploy`：构建并部署到 VPS（`deploy/deploy.sh`：rsync → systemd → nginx + Let's Encrypt）。

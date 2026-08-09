@@ -10,10 +10,6 @@ vite.config.ts.timestamp-*
 /.velite
 /static/blog
 
-# Cloudflare
-/.wrangler
-.dev.vars
-
 # misc
 .DS_Store
 *.pem

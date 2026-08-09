@@ -5,9 +5,8 @@ import { getDictionary, type Language } from "$lib/dictionaries";
 import type { RequestHandler } from "./$types";
 
 // Feeds keep their extensionless URLs (/feed, /feed/zh/tech, ...), so they
-// are served by the worker instead of being prerendered — a static file
-// without an extension would lose its XML content type. Responses are cached
-// at the edge with the Cloudflare Cache API (see below).
+// are served by the Node server instead of being prerendered — a static file
+// without an extension would lose its XML content type.
 export const prerender = false;
 
 const FEED_DESCRIPTIONS: Record<Language, Record<string, string>> = {
@@ -37,14 +36,9 @@ function parsePath(
   return undefined;
 }
 
-export const GET: RequestHandler = async ({ params, request, platform, url }) => {
+export const GET: RequestHandler = async ({ params, url }) => {
   const parsed = parsePath(params.path);
   if (!parsed) error(404, "Unknown feed");
-
-  // Serve from the Cloudflare edge cache when possible.
-  const cache = platform?.caches?.default;
-  const cached = await cache?.match(request.url);
-  if (cached) return cached;
 
   const { lang, section } = parsed;
   const dictionary = getDictionary(lang);
@@ -67,16 +61,10 @@ export const GET: RequestHandler = async ({ params, request, platform, url }) =>
     })),
   });
 
-  const response = new Response(xml, {
+  return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
-
-  if (cache) {
-    platform?.context?.waitUntil(cache.put(request.url, response.clone()));
-  }
-
-  return response;
 };
