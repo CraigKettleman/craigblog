@@ -1,0 +1,6 @@
+{
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "cSpell.words": ["tailwindcss", "velite"],
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2
+}

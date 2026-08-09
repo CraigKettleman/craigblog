@@ -1,0 +1,19 @@
+[Unit]
+Description=hhy.homes — SvelteKit node server
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/var/www/hhy.homes
+Environment=NODE_ENV=production
+Environment=HOST=127.0.0.1
+Environment=PORT=3000
+EnvironmentFile=/var/www/hhy.homes/.env
+ExecStart=__NODE_BIN__ /var/www/hhy.homes/build/index.js
+Restart=always
+RestartSec=3
+SyslogIdentifier=hhy-homes
+
+[Install]
+WantedBy=multi-user.target

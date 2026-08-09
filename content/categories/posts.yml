@@ -1,0 +1,23 @@
+- slug: development
+  name:
+    en: Development
+    zh: 开发
+  description:
+    en: Sharing some problems encountered in the development process
+    zh: 分享在开发过程中遇到的一些问题
+
+- slug: product
+  name:
+    en: Product
+    zh: 产品
+  description:
+    en: Sharing some ideas about products
+    zh: 分享一些有关产品的想法
+
+- slug: marketing
+  name:
+    en: Marketing
+    zh: 市场营销
+  description:
+    en: Sharing some ideas about marketing
+    zh: 分享一些有关市场营销的想法

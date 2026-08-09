@@ -1,0 +1,47 @@
+- slug: blog-journey
+  name:
+    en: Blog Journey
+    zh: 博客历程
+  description:
+    en: Sharing some stories and thoughts about this blog
+    zh: 分享关于这个博客网站的一些历程和心得
+
+- slug: chatter
+  name:
+    en: Chatter
+    zh: 自言自语
+  description:
+    en: Some inner monologues, don't take them too seriously
+    zh: 一些自言自语，请勿当真
+
+- slug: translation
+  name:
+    en: Translations
+    zh: 文本翻译
+  description:
+    en: Translations of interesting English articles I've come across
+    zh: 看到一些有意思的英文文章，可能会翻译一下发到这里
+
+- slug: reading
+  name:
+    en: Reading & Writing
+    zh: 读读写写
+  description:
+    en: Sharing some reading notes
+    zh: 分享一些读书笔记
+
+- slug: recalls
+  name:
+    en: Looking Back
+    zh: 回头看看
+  description:
+    en: Reflecting on things from the past
+    zh: 回顾一些过去的事情
+
+- slug: verses
+  name:
+    en: Perhaps Poetry
+    zh: 也许是诗
+  description:
+    en: What on earth did I write
+    zh: 这都是写的个啥

@@ -1,0 +1,26 @@
+# dependencies
+/node_modules
+
+# SvelteKit / Vite
+/.svelte-kit
+/build
+vite.config.ts.timestamp-*
+
+# Velite (generated content data + copied assets)
+/.velite
+/static/blog
+
+# Cloudflare
+/.wrangler
+.dev.vars
+
+# misc
+.DS_Store
+*.pem
+*.log
+*.tsbuildinfo
+
+# local env files
+.env
+.env.*
+!.env.example
