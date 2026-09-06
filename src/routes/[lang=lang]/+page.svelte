@@ -1,6 +1,11 @@
 <script lang="ts">
+  import { browser } from "$app/environment";
+  import { invalidateAll } from "$app/navigation";
   import { onMount } from "svelte";
+  import { page } from "$app/state";
   import { getDictionary, type Language } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
+  import { getEditMode } from "$lib/admin-state.svelte";
   import { generateWebSiteJsonLd } from "$lib/json-ld";
   import Icon from "$lib/components/Icon.svelte";
   import PostList from "$lib/components/PostList.svelte";
@@ -9,18 +14,31 @@
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Seo from "$lib/components/Seo.svelte";
   import SocialHoverCard from "$lib/components/SocialHoverCard.svelte";
+  import SiteSettingsEditor from "$lib/components/admin/SiteSettingsEditor.svelte";
 
   let { data } = $props();
 
   let lang = $derived(data.lang);
   let dictionary = $derived(getDictionary(lang));
+  let site = $derived(siteMeta(lang));
+  let admin = $derived(!!page.data.admin);
+  let editing = $derived(admin && getEditMode());
+
+  // 站点资料编辑抽屉
+  let settingsOpen = $state(false);
+
+  async function onSiteSaved() {
+    // 等 velite watch 重建后重跑 load，刷新名称/座右铭渲染
+    await new Promise((r) => setTimeout(r, 400));
+    await invalidateAll();
+  }
 
   // Prerendered pages show the first motto; rotate randomly per visit.
   let mottoIndex = $state(0);
   onMount(() => {
-    mottoIndex = Math.floor(Math.random() * dictionary.meta.mottos.length);
+    mottoIndex = Math.floor(Math.random() * site.mottos.length);
   });
-  let motto = $derived(dictionary.meta.mottos[mottoIndex] ?? dictionary.meta.motto);
+  let motto = $derived(site.mottos[mottoIndex] ?? site.motto);
 
   let primaryWorks = $derived(
     dictionary.works.filter((work) => work.primary).slice(0, 4),
@@ -31,16 +49,16 @@
 
 <Seo
   {lang}
-  title={dictionary.meta.websiteName}
-  description={dictionary.meta.motto}
+  title={site.websiteName}
+  description={site.motto}
   path={dictionary.urls.home}
   feeds
   jsonLd={[
     generateWebSiteJsonLd({
-      name: dictionary.meta.websiteName,
+      name: site.websiteName,
       alternateName: "Craig",
       url: `${dictionary.meta.baseUrl}${dictionary.urls.home}`,
-      description: dictionary.meta.motto,
+      description: site.motto,
     }),
   ]}
 />
@@ -48,12 +66,22 @@
 <div>
   <!-- Profile header - printed label style -->
   <PrintedSection>
+    {#if editing}
+      <div class="mb-3 flex justify-end">
+        <button
+          onclick={() => (settingsOpen = true)}
+          class="rounded-sm border border-printer-accent/50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-printer-accent hover:bg-printer-accent/10 dark:border-printer-accent-dark/50 dark:text-printer-accent-dark dark:hover:bg-printer-accent-dark/10"
+        >
+          ✎ 站点资料
+        </button>
+      </div>
+    {/if}
     <div class="flex items-start gap-4 mb-2">
       <div class="flex-1">
         <h1
           class="font-serif text-2xl font-bold tracking-tight text-printer-ink dark:text-printer-ink-dark"
         >
-          Craig
+          {site.websiteName}
         </h1>
         <p
           class="font-serif text-xs sm:text-[13px] text-printer-ink-light dark:text-printer-ink-dark/60 mt-1 leading-relaxed"
@@ -107,7 +135,7 @@
   <PrintedDivider style="dotted" />
 
   <!-- Works section -->
-  <PrintedSection label={dictionary.labels.works} labelIcon="apps">
+  <PrintedSection label={dictionary.labels.projects} labelIcon="apps">
     <div class="grid grid-cols-2 gap-2">
       {#each primaryWorks as work (work.name)}
         <a
@@ -153,23 +181,10 @@
       {/each}
     </div>
     <a
-      href={dictionary.urls.works}
+      href={dictionary.urls.projects}
       class="inline-flex items-center gap-1 font-mono text-[11px] tracking-wider text-printer-accent dark:text-printer-accent-dark mt-3 hover:underline"
     >
       ◦ {dictionary.labels.viewAll} →
-    </a>
-  </PrintedSection>
-
-  <PrintedDivider style="dashed" />
-
-  <!-- Latest Life Posts -->
-  <PrintedSection label={dictionary.labels.latestLife} labelIcon="draft">
-    <PostList posts={data.latestLife} {lang} compact />
-    <a
-      href={dictionary.urls.life}
-      class="inline-flex items-center gap-1 font-mono text-[11px] tracking-wider text-printer-accent dark:text-printer-accent-dark mt-3 hover:underline"
-    >
-      ✦ {dictionary.labels.viewAll} →
     </a>
   </PrintedSection>
 
@@ -201,3 +216,11 @@
     </div>
   </div>
 </div>
+
+{#if editing && settingsOpen && browser}
+  <SiteSettingsEditor
+    {lang}
+    onclose={() => (settingsOpen = false)}
+    onSaved={onSiteSaved}
+  />
+{/if}

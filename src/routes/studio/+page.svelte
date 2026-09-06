@@ -34,7 +34,7 @@
   let editTitleZh = $state("");
   let editBodyEn = $state("");
   let editBodyZh = $state("");
-  let editSection = $state<"posts" | "life-posts">("posts");
+  let editSection = $state<"posts">("posts");
   let isNew = $state(false);
 
   async function loadPosts() {
@@ -64,7 +64,7 @@
       editTitleZh = data.title.zh;
       editBodyEn = data.content.en;
       editBodyZh = data.content.zh;
-      editSection = data.section === "life" ? "life-posts" : "posts";
+      editSection = "posts";
     } catch { /* */ }
     loading = false;
   }
@@ -173,8 +173,8 @@
     {#if loading && posts.length === 0}
       <p class="p-3 font-mono text-[10px] text-printer-ink-light/50">Loading...</p>
     {:else}
-      {#each ["posts", "life-posts"] as section}
-        {@const sectionPosts = posts.filter((p) => p.section === (section === "life-posts" ? "life" : "posts"))}
+      {#each ["posts"] as section}
+        {@const sectionPosts = posts.filter((p) => p.section === "posts")}
         {#if sectionPosts.length > 0}
           <div class="px-3 py-1 font-mono text-[9px] tracking-wider uppercase text-printer-ink-light/50">
             {section}
@@ -244,7 +244,6 @@
               class="w-full mt-0.5 rounded-sm border border-printer-ink/20 dark:border-printer-ink-dark/20 bg-transparent px-2 py-1 text-[12px]"
             >
               <option value="posts">posts</option>
-              <option value="life-posts">life-posts</option>
             </select>
           </label>
           <label class="block">

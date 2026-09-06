@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getDictionary } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
   import PostList from "$lib/components/PostList.svelte";
   import PrintedDivider from "$lib/components/PrintedDivider.svelte";
   import PrintedPageTitle from "$lib/components/PrintedPageTitle.svelte";
@@ -10,12 +11,13 @@
 
   let lang = $derived(data.lang);
   let dictionary = $derived(getDictionary(lang));
+  let site = $derived(siteMeta(lang));
   let category = $derived(data.category);
 </script>
 
 <Seo
   {lang}
-  title="{category.name[lang]} - {dictionary.meta.websiteName}"
+  title="{category.name[lang]} - {site.websiteName}"
   description={category.description?.[lang]}
   path={category.permalink[lang]}
 />

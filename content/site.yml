@@ -1,0 +1,22 @@
+# 站点元信息（双语）。在本地「可编辑模式」下修改并保存后，重新构建即可生效。
+websiteName:
+  en: "Craig"
+  zh: "Craig"
+motto:
+  en: "Attention is all i need."
+  zh: "Attention is all i need."
+mottos:
+  en:
+    - "Attention is all i need."
+  zh:
+    - "All I need is to pay attention."
+brandName:
+  en: "Craig"
+  zh: "Craig"
+brandTagline:
+  en: "Personal Website"
+  zh: "个人主页"
+# 「更多」页个人简介（markdown 文本，双语）
+about:
+  en: "This is the personal space of [Craig](https://hhy.homes).\n\nUpdated irregularly. Content is being prepared — check back later."
+  zh: "这里是 [Craig](https://hhy.homes) 的个人空间。\n\n不定期更新。内容筹备中，敬请期待。"

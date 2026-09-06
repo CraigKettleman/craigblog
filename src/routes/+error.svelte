@@ -1,16 +1,18 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { getDictionary, isLanguage, defaultLanguage } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
 
   let lang = $derived.by(() => {
     const param = page.params.lang ?? page.url.pathname.split("/")[1];
     return param && isLanguage(param) ? param : defaultLanguage;
   });
   let dictionary = $derived(getDictionary(lang));
+  let site = $derived(siteMeta(lang));
 </script>
 
 <svelte:head>
-  <title>{dictionary.labels.notFoundTitle} - {dictionary.meta.websiteName}</title>
+  <title>{dictionary.labels.notFoundTitle} - {site.websiteName}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
 

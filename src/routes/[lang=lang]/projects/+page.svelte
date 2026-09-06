@@ -1,18 +1,17 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { getDictionary, type Language } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
   import Icon from "$lib/components/Icon.svelte";
-  import PostList from "$lib/components/PostList.svelte";
   import PrintedDivider from "$lib/components/PrintedDivider.svelte";
   import PrintedLabel from "$lib/components/PrintedLabel.svelte";
   import PrintedPageTitle from "$lib/components/PrintedPageTitle.svelte";
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Seo from "$lib/components/Seo.svelte";
 
-  let { data } = $props();
-
   let lang = $derived(page.params.lang as Language);
   let dictionary = $derived(getDictionary(lang));
+  let site = $derived(siteMeta(lang));
 
   let primaryWorks = $derived(dictionary.works.filter((work) => work.primary));
   let otherWorks = $derived(dictionary.works.filter((work) => !work.primary));
@@ -26,17 +25,17 @@
 
 <Seo
   {lang}
-  title="{dictionary.labels.works} - {dictionary.meta.websiteName}"
-  description={dictionary.labels.myWorks}
-  path={dictionary.urls.works}
+  title="{dictionary.labels.projects} - {site.websiteName}"
+  description={dictionary.labels.myProjects}
+  path={dictionary.urls.projects}
 />
 
 <div>
   <!-- Header -->
   <PrintedSection>
-    <PrintedPageTitle icon="apps">{dictionary.labels.works}</PrintedPageTitle>
+    <PrintedPageTitle icon="apps">{dictionary.labels.projects}</PrintedPageTitle>
     <p class="font-serif text-xs text-printer-ink-light dark:text-printer-ink-dark/50">
-      {dictionary.labels.myWorks}
+      {dictionary.labels.myProjects}
     </p>
   </PrintedSection>
 
@@ -158,24 +157,6 @@
       </div>
     </details>
   {/if}
-
-  <PrintedDivider style="dashed" />
-
-  <!-- Tech posts (merged from the former Tech page) -->
-  <PrintedSection label={dictionary.labels.latestTech} labelIcon="window">
-    <div class="flex flex-wrap gap-1.5 mb-2">
-      {#each data.categories as category (category.slug)}
-        <a href={category.permalink[lang]}>
-          <PrintedLabel variant="default">
-            {category.name[lang]}
-            <span class="opacity-50">({category.count[lang]})</span>
-          </PrintedLabel>
-        </a>
-      {/each}
-    </div>
-  </PrintedSection>
-
-  <PostList posts={data.posts} {lang} />
 
   <PrintedDivider style="dashed" />
 

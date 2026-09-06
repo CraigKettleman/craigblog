@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { getDictionary, type Language } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
   import { resumeContent } from "$lib/resume";
   import type { IconName } from "$lib/icons";
   import Icon from "$lib/components/Icon.svelte";
@@ -12,6 +13,7 @@
 
   let lang = $derived(page.params.lang as Language);
   let dictionary = $derived(getDictionary(lang));
+  let site = $derived(siteMeta(lang));
   let content = $derived(resumeContent[lang]);
 
   const contactIcons: Record<string, IconName> = {
@@ -25,7 +27,7 @@
 
 <Seo
   {lang}
-  title="{content.pageTitle} - {dictionary.meta.websiteName}"
+  title="{content.pageTitle} - {site.websiteName}"
   description={content.summary}
   keywords={["resume", "cv"]}
   path="/{lang}/resume"

@@ -2,6 +2,7 @@ import { error } from "@sveltejs/kit";
 import { postsOf, type Section } from "$lib/content";
 import { generateRssFeed } from "$lib/feed";
 import { getDictionary, type Language } from "$lib/dictionaries";
+import { siteMeta } from "$lib/site";
 import type { RequestHandler } from "./$types";
 
 // Feeds keep their extensionless URLs (/feed, /feed/zh/tech, ...), so they
@@ -11,14 +12,12 @@ export const prerender = false;
 
 const FEED_DESCRIPTIONS: Record<Language, Record<string, string>> = {
   en: {
-    all: "All posts from Craig — tech articles and life essays.",
+    all: "All posts from Craig — tech articles and essays.",
     tech: "Tech articles and development insights from Craig.",
-    life: "Life essays and personal writing from Craig.",
   },
   zh: {
-    all: "Craig 的全部文章——技术与生活。",
-    tech: "Craig 的技术文章。",
-    life: "Craig 的生活随笔。",
+    all: "Craig 的全部文章。",
+    tech: "Craig 的文章。",
   },
 };
 
@@ -32,7 +31,6 @@ function parsePath(
   if (segments.length === 0) return { lang };
   if (segments.length > 1) return undefined;
   if (segments[0] === "tech") return { lang, section: "posts" };
-  if (segments[0] === "life") return { lang, section: "life" };
   return undefined;
 }
 
@@ -42,12 +40,13 @@ export const GET: RequestHandler = async ({ params, url }) => {
 
   const { lang, section } = parsed;
   const dictionary = getDictionary(lang);
-  const kind = section === "posts" ? "tech" : section === "life" ? "life" : "all";
+  const site = siteMeta(lang);
+  const kind = section === "posts" ? "tech" : "all";
   const suffix =
     kind === "all" ? "" : ` - ${dictionary.labels[section as Section]}`;
 
   const xml = generateRssFeed({
-    title: `${dictionary.meta.websiteName}${suffix}`,
+    title: `${site.websiteName}${suffix}`,
     description: FEED_DESCRIPTIONS[lang][kind],
     link: url.pathname,
     language: lang,

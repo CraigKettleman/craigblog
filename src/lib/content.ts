@@ -1,7 +1,7 @@
 import { categories as allCategories, posts as allPosts } from "#velite";
 import type { Language } from "$lib/dictionaries";
 
-export const sections = ["posts", "life"] as const;
+export const sections = ["posts"] as const;
 
 export type Section = (typeof sections)[number];
 
@@ -25,6 +25,7 @@ export interface Post {
   excerpt: string;
   content: string;
   permalink: string;
+  path: string;
 }
 
 export interface Category {

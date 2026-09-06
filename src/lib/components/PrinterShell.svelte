@@ -4,29 +4,36 @@
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
   import type { Dictionary, Language } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
   import PrinterSnail from "./PrinterSnail.svelte";
   import SocialHoverCard from "./SocialHoverCard.svelte";
   import RotaryDial from "./RotaryDial.svelte";
   import LightSwitch from "./LightSwitch.svelte";
   import Stickers from "./Stickers.svelte";
+  import Icon from "./Icon.svelte";
+  import SubmitPostModal from "./SubmitPostModal.svelte";
 
   type ColorMode = "system" | "light" | "dark";
 
   let {
     lang,
     dictionary,
+    admin = false,
     children,
   }: {
     lang: Language;
     dictionary: Dictionary;
+    admin?: boolean;
     children: Snippet;
   } = $props();
+
+  let site = $derived(siteMeta(lang));
+  let submitOpen = $state(false);
 
   let navItems = $derived([
     { label: dictionary.labels.home, href: dictionary.urls.home },
     { label: dictionary.labels.share, href: dictionary.urls.share },
-    { label: dictionary.labels.life, href: dictionary.urls.life },
-    { label: dictionary.labels.works, href: dictionary.urls.works },
+    { label: dictionary.labels.projects, href: dictionary.urls.projects },
     { label: dictionary.labels.about, href: dictionary.urls.about },
   ]);
 
@@ -38,9 +45,9 @@
   function isActive(href: string): boolean {
     const pathname = page.url.pathname;
     if (href === dictionary.urls.home) return pathname === href;
-    // Tech posts live under /{lang}/posts but belong to the Work page.
+    // 技术文章挂在 /{lang}/posts，但归属「分享」页。
     if (
-      href === dictionary.urls.works &&
+      href === dictionary.urls.share &&
       pathname.startsWith(`/${lang}/posts`)
     ) {
       return true;
@@ -217,12 +224,12 @@
               <div
                 class="font-mono text-sm font-bold tracking-[0.25em] text-printer-ink dark:text-printer-ink-dark uppercase"
               >
-                {dictionary.labels.brandName}
+                {site.brandName}
               </div>
               <div
                 class="font-mono text-[9px] tracking-[0.1em] text-printer-ink-light dark:text-printer-ink-dark/40 uppercase mt-0.5"
               >
-                {dictionary.labels.brandTagline}
+                {site.brandTagline}
               </div>
             </div>
           </div>
@@ -271,6 +278,16 @@
           </nav>
           <div class="sm:hidden h-[1px] bg-black/10 dark:bg-white/10"></div>
           <div class="flex items-center justify-end gap-5 shrink-0 py-1">
+            {#if admin}
+              <button
+                onclick={() => submitOpen = true}
+                class="printer-btn whitespace-nowrap !bg-orange-500 hover:!bg-orange-600 !text-white border-transparent flex items-center gap-1.5"
+                title="投稿"
+              >
+                <Icon name="upload" class="w-3.5 h-3.5" />
+                <span class="leading-none">投稿</span>
+              </button>
+            {/if}
             <RotaryDial
               options={[
                 { value: "en", label: "EN" },
@@ -417,3 +434,7 @@
     </div>
   </div>
 </div>
+
+{#if submitOpen}
+  <SubmitPostModal {lang} onclose={() => submitOpen = false} />
+{/if}

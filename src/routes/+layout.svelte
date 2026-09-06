@@ -3,6 +3,7 @@
   import { page } from "$app/state";
   import { getDictionary, isLanguage, defaultLanguage } from "$lib/dictionaries";
   import PrinterShell from "$lib/components/PrinterShell.svelte";
+  import AdminBar from "$lib/components/AdminBar.svelte";
 
   let { children } = $props();
 
@@ -11,14 +12,17 @@
     return param && isLanguage(param) ? param : defaultLanguage;
   });
   let dictionary = $derived(getDictionary(lang));
+  let admin = $derived(!!page.data.admin);
 
-  // The server only sets <html lang> on full page loads; keep it in sync
-  // across client-side language switches.
   $effect(() => {
     document.documentElement.lang = lang;
   });
 </script>
 
-<PrinterShell {lang} {dictionary}>
+<PrinterShell {lang} {dictionary} {admin}>
   {@render children()}
 </PrinterShell>
+
+{#if admin}
+  <AdminBar />
+{/if}

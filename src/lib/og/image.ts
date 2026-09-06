@@ -14,7 +14,7 @@ export interface OgImageOptions {
   description?: string;
   category?: string;
   date?: string;
-  type?: "post" | "life" | "page";
+  type?: "post" | "page";
   emoji?: string;
   subtitle?: string;
   brandName?: string;
@@ -244,7 +244,7 @@ function dotPattern(): Node {
 
 function articleLayout(options: OgImageOptions): Node {
   const { title, description, category, date, type } = options;
-  const typeLabel = type === "life" ? "LIFE" : type === "post" ? "TECH" : "";
+  const typeLabel = type === "post" ? "TECH" : "";
 
   return h(
     "div",

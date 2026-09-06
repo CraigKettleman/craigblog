@@ -1,20 +1,26 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { getDictionary, type Language } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
   import Icon from "$lib/components/Icon.svelte";
+  import PostList from "$lib/components/PostList.svelte";
   import PrintedDivider from "$lib/components/PrintedDivider.svelte";
+  import PrintedLabel from "$lib/components/PrintedLabel.svelte";
   import PrintedPageTitle from "$lib/components/PrintedPageTitle.svelte";
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Seo from "$lib/components/Seo.svelte";
 
+  let { data } = $props();
+
   let lang = $derived(page.params.lang as Language);
   let dictionary = $derived(getDictionary(lang));
+  let site = $derived(siteMeta(lang));
   let feedHref = $derived(lang === "zh" ? "/feed/zh" : "/feed");
 </script>
 
 <Seo
   {lang}
-  title="{dictionary.labels.share} - {dictionary.meta.websiteName}"
+  title="{dictionary.labels.share} - {site.websiteName}"
   description={dictionary.labels.share}
   path={dictionary.urls.share}
 />
@@ -33,6 +39,27 @@
   </PrintedSection>
 
   <PrintedDivider style="solid" />
+
+  <!-- Categories as label strips -->
+  <PrintedSection label={dictionary.labels.categories} labelIcon="tag">
+    <div class="flex flex-wrap gap-1.5 mb-2">
+      {#each data.categories as category (category.slug)}
+        <a href={category.permalink[lang]}>
+          <PrintedLabel variant="default">
+            {category.name[lang]}
+            <span class="opacity-50">({category.count[lang]})</span>
+          </PrintedLabel>
+        </a>
+      {/each}
+    </div>
+  </PrintedSection>
+
+  <PrintedDivider style="dashed" />
+
+  <!-- Post list -->
+  <PostList posts={data.posts} {lang} />
+
+  <PrintedDivider style="dashed" />
 
   <!-- Follow -->
   <PrintedSection label={lang === "zh" ? "关注我" : "Follow"} labelIcon="user">
@@ -69,13 +96,4 @@
         : "Subscribe to my updates with an RSS reader."}
     </p>
   </PrintedSection>
-
-  <PrintedDivider style="dashed" />
-
-  <!-- Footer -->
-  <div
-    class="font-mono text-[9px] text-printer-ink-light dark:text-printer-ink-dark/30 tracking-wider uppercase text-center py-4"
-  >
-    {lang === "zh" ? "分享内容筹备中～" : "More shares coming soon~"}
-  </div>
 </div>

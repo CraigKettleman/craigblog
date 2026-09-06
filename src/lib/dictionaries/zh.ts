@@ -3,9 +3,6 @@ import type { Dictionary } from "./en";
 const dictionary: Dictionary = {
   meta: {
     baseUrl: "https://hhy.homes",
-    websiteName: "Craig",
-    motto: "Attention is all i need.",
-    mottos: ["Attention is all i need."],
     fillKeywords(keywords?: string[]): string[] {
       return [
         "Craig",
@@ -22,10 +19,9 @@ const dictionary: Dictionary = {
   urls: {
     home: "/zh",
     share: "/zh/share",
-    works: "/zh/work",
-    // 技术文章已并入作品页，保留此项用于返回链接。
-    posts: "/zh/work",
-    life: "/zh/life",
+    projects: "/zh/projects",
+    // 技术文章列表展示在「分享」页；posts 保留用于返回链接与文章详情。
+    posts: "/zh/share",
     about: "/zh/about",
 
     shareToX(title: string, postLink: string) {
@@ -37,13 +33,11 @@ const dictionary: Dictionary = {
   labels: {
     home: "主页",
     share: "分享",
-    works: "作品",
-    posts: "技术",
-    life: "札记",
+    projects: "项目",
+    posts: "分享",
     about: "更多",
-    latestTech: "技术",
-    latestLife: "札记",
-    myWorks: "我的作品",
+    latestTech: "最新",
+    myProjects: "我的项目",
     recommended: "推荐",
     activity: "活动",
     categories: "分类",
@@ -51,15 +45,11 @@ const dictionary: Dictionary = {
     archive: "归档",
     viewAll: "更多",
     shareTo: "分享到：",
-    brandName: "Craig",
-    brandTagline: "个人主页",
     backToSection: {
-      posts: "← 返回作品",
-      life: "← 返回生活",
+      posts: "← 返回分享",
     },
     allSectionPosts: {
-      posts: "← 全部技术文章",
-      life: "← 全部生活文章",
+      posts: "← 全部分享文章",
     },
     notFoundStatus: "纸空了",
     notFoundTitle: "托盘已空",

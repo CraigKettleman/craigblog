@@ -1,24 +1,20 @@
 import { error } from "@sveltejs/kit";
 import { categories, findCategory, findPost, isSection, posts } from "$lib/content";
 import { getDictionary, isLanguage, languages } from "$lib/dictionaries";
+import { siteMeta } from "$lib/site";
 import { displayDate } from "$lib/date";
 import { generateOgImage, type OgImageOptions } from "$lib/og/image";
 import { resumeContent } from "$lib/resume";
-import { activities } from "../../../params/activity";
 import type { EntryGenerator, RequestHandler } from "./$types";
 
 export const prerender = true;
 
 /** Static pages under each language, with their page-layout OG options. */
 const PAGE_EMOJIS: Record<string, string> = {
-  life: "🌿",
-  work: "🛠",
+  projects: "🛠",
   share: "🔗",
   about: "👋",
   resume: "📄",
-  "life/reading": "📚",
-  "life/films": "🎬",
-  "life/music": "🎵",
 };
 
 export const entries: EntryGenerator = () => [
@@ -44,9 +40,10 @@ function resolveOptions(path: string): OgImageOptions | undefined {
   if (!lang || !isLanguage(lang)) return undefined;
 
   const dictionary = getDictionary(lang);
+  const site = siteMeta(lang);
   const branding = {
-    brandName: dictionary.labels.brandName,
-    brandTagline: dictionary.labels.brandTagline,
+    brandName: site.brandName,
+    brandTagline: site.brandTagline,
   };
   const page = segments.join("/");
 
@@ -54,7 +51,7 @@ function resolveOptions(path: string): OgImageOptions | undefined {
   if (page === "") {
     return {
       title: "Craig",
-      description: dictionary.meta.motto,
+      description: site.motto,
       type: "page",
       showTitleAvatar: true,
       ...branding,
@@ -64,17 +61,13 @@ function resolveOptions(path: string): OgImageOptions | undefined {
   // Static pages
   if (page in PAGE_EMOJIS) {
     const titles: Record<string, string> = {
-      life: dictionary.labels.life,
-      work: dictionary.labels.works,
+      projects: dictionary.labels.projects,
       share: dictionary.labels.share,
       about: dictionary.labels.aboutTitle,
       resume: resumeContent[lang].name,
-      "life/reading": dictionary.labels.reading,
-      "life/films": dictionary.labels.films,
-      "life/music": dictionary.labels.music,
     };
     const descriptions: Record<string, string | undefined> = {
-      work: dictionary.labels.myWorks,
+      projects: dictionary.labels.myProjects,
       about: dictionary.labels.aboutSubtitle || undefined,
       share: dictionary.labels.share,
       resume: resumeContent[lang].imageDescription,
@@ -90,7 +83,7 @@ function resolveOptions(path: string): OgImageOptions | undefined {
 
   const [section, ...rest] = segments;
   if (!isSection(section)) return undefined;
-  const type = section === "life" ? "life" : "post";
+  const type = "post" as const;
 
   // Category pages
   if (rest.length === 2 && rest[0] === "categories") {

@@ -1,6 +1,5 @@
 import { categories, posts } from "$lib/content";
 import { getDictionary, languages } from "$lib/dictionaries";
-import { activities } from "../../params/activity";
 import type { RequestHandler } from "./$types";
 
 export const prerender = true;
@@ -21,14 +20,8 @@ export const GET: RequestHandler = () => {
     return [
       { loc: dictionary.urls.home, lastmod: now, priority: 1 },
       { loc: dictionary.urls.share, lastmod: now, priority: 0.8 },
-      { loc: dictionary.urls.life, lastmod: now, priority: 1 },
-      { loc: dictionary.urls.works, lastmod: now, priority: 1 },
+      { loc: dictionary.urls.projects, lastmod: now, priority: 1 },
       { loc: dictionary.urls.about, lastmod: now, priority: 0.8 },
-      ...activities.map((activity) => ({
-        loc: `${dictionary.urls.life}/${activity}`,
-        lastmod: now,
-        priority: 0.6,
-      })),
     ];
   });
 

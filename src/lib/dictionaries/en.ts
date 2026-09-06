@@ -62,9 +62,6 @@ const contacts: Contact[] = [
 const dictionary = {
   meta: {
     baseUrl: "https://hhy.homes",
-    websiteName: "Craig",
-    motto: "Attention is all i need.",
-    mottos: ["Attention is all i need."],
     fillKeywords(keywords?: string[]): string[] {
       return [
         "Craig",
@@ -82,10 +79,9 @@ const dictionary = {
   urls: {
     home: "/en",
     share: "/en/share",
-    works: "/en/work",
-    // Tech posts are merged into the Work page; kept for back-links.
-    posts: "/en/work",
-    life: "/en/life",
+    projects: "/en/projects",
+    // 技术文章列表展示在「分享」页；posts 保留用于返回链接与文章详情。
+    posts: "/en/share",
     about: "/en/about",
 
     shareToX(title: string, postLink: string) {
@@ -97,13 +93,11 @@ const dictionary = {
   labels: {
     home: "Home",
     share: "Share",
-    works: "Work",
-    posts: "Tech",
-    life: "Journal",
+    projects: "Project",
+    posts: "Share",
     about: "More",
-    latestTech: "Tech",
-    latestLife: "Journal",
-    myWorks: "My Works",
+    latestTech: "Latest",
+    myProjects: "My Projects",
     recommended: "Recommended",
     activity: "Activity",
     categories: "Categories",
@@ -111,15 +105,11 @@ const dictionary = {
     archive: "Archive",
     viewAll: "View All",
     shareTo: "Share to: ",
-    brandName: "Craig",
-    brandTagline: "Personal Website",
     backToSection: {
-      posts: "← BACK TO WORK",
-      life: "← BACK TO LIFE",
+      posts: "← BACK TO SHARE",
     },
     allSectionPosts: {
-      posts: "← ALL TECH POSTS",
-      life: "← ALL LIFE POSTS",
+      posts: "← ALL SHARE POSTS",
     },
     notFoundStatus: "Paper Tray Empty",
     notFoundTitle: "Out of Paper",

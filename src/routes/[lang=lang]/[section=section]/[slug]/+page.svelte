@@ -1,6 +1,10 @@
 <script lang="ts">
+  import { browser } from "$app/environment";
+  import { invalidateAll } from "$app/navigation";
+  import { page } from "$app/state";
   import { displayDate } from "$lib/date";
   import { getDictionary, languageLabels } from "$lib/dictionaries";
+  import { getEditMode } from "$lib/admin-state.svelte";
   import {
     generateBlogPostingJsonLd,
     generateBreadcrumbJsonLd,
@@ -13,6 +17,7 @@
   import PrintedLabel from "$lib/components/PrintedLabel.svelte";
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Seo from "$lib/components/Seo.svelte";
+  import PostEditor from "$lib/components/admin/PostEditor.svelte";
 
   let { data } = $props();
 
@@ -21,6 +26,21 @@
   let dictionary = $derived(getDictionary(lang));
   let baseUrl = $derived(dictionary.meta.baseUrl);
   let postUrl = $derived(`${baseUrl}${post.permalink}`);
+  let admin = $derived(!!page.data.admin);
+  let editing = $derived(admin && getEditMode());
+
+  // 编辑器抽屉
+  let editOpen = $state(false);
+
+  function openEditor() {
+    editOpen = true;
+  }
+
+  async function onSaved() {
+    // 等 velite watch 重建（实测约 50ms）后重跑 load，拿到新渲染数据
+    await new Promise((r) => setTimeout(r, 400));
+    await invalidateAll();
+  }
 </script>
 
 <Seo
@@ -68,6 +88,17 @@
 <div>
   <!-- Post header -->
   <PrintedSection>
+    {#if editing}
+      <div class="mb-3 flex justify-end">
+        <button
+          onclick={openEditor}
+          class="rounded-sm border border-printer-accent/50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-printer-accent hover:bg-printer-accent/10 dark:border-printer-accent-dark/50 dark:text-printer-accent-dark dark:hover:bg-printer-accent-dark/10"
+        >
+          ✎ 编辑文章
+        </button>
+      </div>
+    {/if}
+
     <div class="flex flex-wrap gap-1.5 mb-3">
       {#each data.categories as category (category.slug)}
         <a href={category.permalink[lang]}>
@@ -177,3 +208,12 @@
     <PostAdvertising advertisements={dictionary.postAdvertisements} />
   </PrintedSection>
 </div>
+
+{#if editing && editOpen && browser}
+  <PostEditor
+    {lang}
+    postPath={post.path}
+    onclose={() => (editOpen = false)}
+    onSaved={onSaved}
+  />
+{/if}

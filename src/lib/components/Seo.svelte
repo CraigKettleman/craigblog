@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getDictionary, languages, defaultLanguage } from "$lib/dictionaries";
   import type { Language } from "$lib/dictionaries";
+  import { siteMeta } from "$lib/site";
 
   const BASE_URL = "https://hhy.homes";
 
@@ -44,6 +45,7 @@
   } = $props();
 
   let dictionary = $derived(getDictionary(lang));
+  let site = $derived(siteMeta(lang));
   let url = $derived(`${BASE_URL}${path}`);
   let image = $derived(`${BASE_URL}${ogImage ?? `/og${path}.png`}`);
   let allKeywords = $derived(dictionary.meta.fillKeywords(keywords));
@@ -90,7 +92,7 @@
   {#if description}
     <meta property="og:description" content={description} />
   {/if}
-  <meta property="og:site_name" content={dictionary.meta.websiteName} />
+  <meta property="og:site_name" content={site.websiteName} />
   <meta property="og:locale" content={lang === "zh" ? "zh_CN" : "en_US"} />
   <meta property="og:image" content={image} />
   <meta property="og:image:width" content="1200" />
@@ -125,19 +127,19 @@
       rel="alternate"
       type="application/rss+xml"
       href="{feedBase}"
-      title="{dictionary.meta.websiteName} - All"
+      title="{site.websiteName} - All"
     />
     <link
       rel="alternate"
       type="application/rss+xml"
       href="{feedBase}/tech"
-      title="{dictionary.meta.websiteName} - Tech"
+      title="{site.websiteName} - Tech"
     />
     <link
       rel="alternate"
       type="application/rss+xml"
       href="{feedBase}/life"
-      title="{dictionary.meta.websiteName} - Life"
+      title="{site.websiteName} - Life"
     />
   {/if}
 
