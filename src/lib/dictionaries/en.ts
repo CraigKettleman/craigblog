@@ -107,9 +107,11 @@ const dictionary = {
     shareTo: "Share to: ",
     backToSection: {
       posts: "← BACK TO SHARE",
+      projects: "← BACK TO PROJECTS",
     },
     allSectionPosts: {
       posts: "← ALL SHARE POSTS",
+      projects: "← ALL PROJECT POSTS",
     },
     notFoundStatus: "Paper Tray Empty",
     notFoundTitle: "Out of Paper",

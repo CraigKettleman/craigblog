@@ -52,7 +52,7 @@ export const GET: RequestHandler = async ({ params }) => {
 
   return json({
     path: dir,
-    section: "posts",
+    section: dir.startsWith("projects/") ? "projects" : "posts",
     slug: String(en.data.slug ?? zh.data.slug ?? ""),
     date: String(en.data.date ?? zh.data.date ?? ""),
     draft: Boolean(en.data.draft ?? zh.data.draft ?? false),

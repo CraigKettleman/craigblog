@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
-  import { invalidateAll } from "$app/navigation";
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { getDictionary, type Language } from "$lib/dictionaries";
   import { siteMeta } from "$lib/site";
   import { getEditMode } from "$lib/admin-state.svelte";
+  import { saveSite } from "$lib/admin-save";
   import { generateWebSiteJsonLd } from "$lib/json-ld";
   import Icon from "$lib/components/Icon.svelte";
   import PostList from "$lib/components/PostList.svelte";
@@ -14,7 +13,7 @@
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Seo from "$lib/components/Seo.svelte";
   import SocialHoverCard from "$lib/components/SocialHoverCard.svelte";
-  import SiteSettingsEditor from "$lib/components/admin/SiteSettingsEditor.svelte";
+  import EditableText from "$lib/components/admin/EditableText.svelte";
 
   let { data } = $props();
 
@@ -24,13 +23,32 @@
   let admin = $derived(!!page.data.admin);
   let editing = $derived(admin && getEditMode());
 
-  // 站点资料编辑抽屉
-  let settingsOpen = $state(false);
+  // 编辑态：座右铭以完整列表呈现（展示态随机展示一条），就地增删改。
+  let mottoDrafts = $state<string[]>([]);
+  $effect(() => {
+    const list = site.mottos.length > 0 ? site.mottos : site.motto ? [site.motto] : [];
+    mottoDrafts = [...list];
+  });
 
-  async function onSiteSaved() {
-    // 等 velite watch 重建后重跑 load，刷新名称/座右铭渲染
-    await new Promise((r) => setTimeout(r, 400));
-    await invalidateAll();
+  async function saveWebsiteName(v: string) {
+    await saveSite({ websiteName: { [lang]: v } });
+  }
+
+  function addMotto() {
+    mottoDrafts = [...mottoDrafts, ""];
+  }
+
+  function removeMotto(index: number) {
+    const next = mottoDrafts.filter((_, i) => i !== index);
+    mottoDrafts = next;
+    saveSite({ mottos: { [lang]: next.filter((s) => s.trim() !== "") } }).catch(() => {});
+  }
+
+  async function saveMotto(index: number, v: string) {
+    const next = [...mottoDrafts];
+    next[index] = v;
+    mottoDrafts = next;
+    await saveSite({ mottos: { [lang]: next.filter((s) => s.trim() !== "") } });
   }
 
   // Prerendered pages show the first motto; rotate randomly per visit.
@@ -66,28 +84,47 @@
 <div>
   <!-- Profile header - printed label style -->
   <PrintedSection>
-    {#if editing}
-      <div class="mb-3 flex justify-end">
-        <button
-          onclick={() => (settingsOpen = true)}
-          class="rounded-sm border border-printer-accent/50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-printer-accent hover:bg-printer-accent/10 dark:border-printer-accent-dark/50 dark:text-printer-accent-dark dark:hover:bg-printer-accent-dark/10"
-        >
-          ✎ 站点资料
-        </button>
-      </div>
-    {/if}
     <div class="flex items-start gap-4 mb-2">
       <div class="flex-1">
         <h1
           class="font-serif text-2xl font-bold tracking-tight text-printer-ink dark:text-printer-ink-dark"
         >
-          {site.websiteName}
+          <EditableText editing={editing} value={site.websiteName} onsave={saveWebsiteName} />
         </h1>
-        <p
-          class="font-serif text-xs sm:text-[13px] text-printer-ink-light dark:text-printer-ink-dark/60 mt-1 leading-relaxed"
-        >
-          {motto}
-        </p>
+        {#if editing}
+          <div class="mt-1.5 space-y-1">
+            {#each mottoDrafts as m, i (i)}
+              <div class="flex items-baseline gap-1.5">
+                <p
+                  class="flex-1 font-serif text-xs sm:text-[13px] text-printer-ink-light dark:text-printer-ink-dark/60 leading-relaxed"
+                >
+                  <EditableText editing value={m} onsave={(v) => saveMotto(i, v)} />
+                </p>
+                <button
+                  type="button"
+                  onclick={() => removeMotto(i)}
+                  class="font-mono text-[11px] text-printer-ink-light/50 hover:text-red-500 dark:text-printer-ink-dark/40"
+                  aria-label="删除这条座右铭"
+                >
+                  ×
+                </button>
+              </div>
+            {/each}
+            <button
+              type="button"
+              onclick={addMotto}
+              class="font-mono text-[10px] tracking-wider text-printer-accent dark:text-printer-accent-dark hover:underline"
+            >
+              + 添加一条
+            </button>
+          </div>
+        {:else}
+          <p
+            class="font-serif text-xs sm:text-[13px] text-printer-ink-light dark:text-printer-ink-dark/60 mt-1 leading-relaxed"
+          >
+            {motto}
+          </p>
+        {/if}
       </div>
     </div>
 
@@ -192,7 +229,7 @@
 
   <!-- Latest Tech Posts -->
   <PrintedSection label={dictionary.labels.latestTech} labelIcon="window">
-    <PostList posts={data.latestTech} {lang} compact />
+    <PostList posts={data.latestTech} {lang} compact editable={editing} />
     <a
       href={dictionary.urls.posts}
       class="inline-flex items-center gap-1 font-mono text-[11px] tracking-wider text-printer-accent dark:text-printer-accent-dark mt-3 hover:underline"
@@ -216,11 +253,3 @@
     </div>
   </div>
 </div>
-
-{#if editing && settingsOpen && browser}
-  <SiteSettingsEditor
-    {lang}
-    onclose={() => (settingsOpen = false)}
-    onSaved={onSiteSaved}
-  />
-{/if}

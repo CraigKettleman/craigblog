@@ -47,9 +47,11 @@ const dictionary: Dictionary = {
     shareTo: "分享到：",
     backToSection: {
       posts: "← 返回分享",
+      projects: "← 返回项目",
     },
     allSectionPosts: {
       posts: "← 全部分享文章",
+      projects: "← 全部项目文章",
     },
     notFoundStatus: "纸空了",
     notFoundTitle: "托盘已空",

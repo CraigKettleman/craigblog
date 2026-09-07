@@ -1,9 +1,8 @@
 <script lang="ts">
-  import { browser } from "$app/environment";
-  import { invalidateAll } from "$app/navigation";
   import { page } from "$app/state";
   import { getDictionary, type Language } from "$lib/dictionaries";
   import { getEditMode } from "$lib/admin-state.svelte";
+  import { saveSite } from "$lib/admin-save";
   import { siteMeta } from "$lib/site";
   import PostContent from "$lib/components/PostContent.svelte";
   import PrintedDivider from "$lib/components/PrintedDivider.svelte";
@@ -11,7 +10,7 @@
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Comments from "$lib/components/Comments.svelte";
   import Seo from "$lib/components/Seo.svelte";
-  import SiteSettingsEditor from "$lib/components/admin/SiteSettingsEditor.svelte";
+  import EditableMarkdown from "$lib/components/admin/EditableMarkdown.svelte";
 
   let lang = $derived(page.params.lang as Language);
   let dictionary = $derived(getDictionary(lang));
@@ -21,11 +20,12 @@
   let editing = $derived(admin && getEditMode());
 
   // 个人简介以 site.yml 为准（可在「可编辑模式」下修改），无则回退到字典默认值。
-  let aboutSource = $derived(site.about.trim());
+  let aboutSource = $derived(site.about.trim() || dictionary.aboutContent);
+  const aboutForEdit = $derived(site.about.trim());
 
   // Convert the simple markdown-ish about text to HTML.
   let aboutHtml = $derived(
-    (aboutSource || dictionary.aboutContent)
+    aboutSource
       .trim()
       .replace(/### (.+)/g, "<h3>$1</h3>")
       .replace(/## (.+)/g, "<h2>$1</h2>")
@@ -43,12 +43,8 @@
       .replace(/<p><\/p>/g, ""),
   );
 
-  let editOpen = $state(false);
-
-  async function onSaved() {
-    editOpen = false;
-    await new Promise((r) => setTimeout(r, 400));
-    await invalidateAll();
+  async function saveAbout(raw: string) {
+    await saveSite({ about: { [lang]: raw } });
   }
 </script>
 
@@ -62,17 +58,6 @@
 <div>
   <!-- Header -->
   <PrintedSection>
-    {#if editing}
-      <div class="mb-3 flex justify-end">
-        <button
-          onclick={() => (editOpen = true)}
-          class="rounded-sm border border-printer-accent/50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-printer-accent hover:bg-printer-accent/10 dark:border-printer-accent-dark/50 dark:text-printer-accent-dark dark:hover:bg-printer-accent-dark/10"
-        >
-          ✎ 编辑个人简介
-        </button>
-      </div>
-    {/if}
-
     <PrintedPageTitle icon="user">{dictionary.labels.aboutTitle}</PrintedPageTitle>
     {#if subtitle}
       <p class="font-serif text-xs text-printer-ink-light dark:text-printer-ink-dark/50">
@@ -84,13 +69,17 @@
   <PrintedDivider style="solid" />
 
   <!-- About content -->
-  <PostContent html={aboutHtml} />
+  <EditableMarkdown
+    editing={editing}
+    sourceKey="about"
+    loadRaw={() => Promise.resolve(aboutForEdit)}
+    onsave={saveAbout}
+    label="简介 · MARKDOWN"
+  >
+    <PostContent html={aboutHtml} />
+  </EditableMarkdown>
 
   <PrintedDivider style="dashed" />
 
   <Comments {lang} thread={`/${lang}/about`} />
 </div>
-
-{#if editing && editOpen && browser}
-  <SiteSettingsEditor {lang} onclose={() => (editOpen = false)} onSaved={onSaved} />
-{/if}

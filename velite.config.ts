@@ -3,8 +3,9 @@ import { defineCollection, defineConfig, s } from "velite";
 
 /**
  * 单一内容管线：
- *   content/posts/** -> section "posts"（对外称「分享」），served under /{lang}/posts
- * 分类在 content/categories/posts.yml 注册。
+ *   content/posts/**    -> section "posts"（对外称「分享」），served under /{lang}/posts
+ *   content/projects/** -> section "projects"（对外称「项目」），served under /{lang}/projects
+ * 分类在 content/categories/{posts,projects}.yml 按栏目注册。
  */
 
 const lang = s.enum(["en", "zh"]);
@@ -35,8 +36,16 @@ const localizedText = (max: number) =>
     zh: s.string().max(max),
   });
 
-function sectionOfPath(path: string): "posts" {
-  return "posts";
+function sectionOfPath(path: string): "posts" | "projects" {
+  // 路径首段即栏目：posts/... 或 projects/...（文章目录）
+  const first = path.split("/")[0];
+  return first === "projects" ? "projects" : "posts";
+}
+
+function sectionOfCategoryFile(path: string): "posts" | "projects" {
+  // categories/<section>.yml，s.path() 已去扩展名
+  const name = path.split("/").pop() ?? "";
+  return name === "projects" ? "projects" : "posts";
 }
 
 const categories = defineCollection({
@@ -51,7 +60,8 @@ const categories = defineCollection({
       path: s.path(),
     })
     .transform(({ path, ...data }) => {
-      const section = sectionOfPath(path);
+      // 文件名即栏目：categories/posts.yml -> posts，categories/projects.yml -> projects
+      const section = sectionOfCategoryFile(path);
       return {
         ...data,
         section,
@@ -83,12 +93,25 @@ const site = defineCollection({
         zh: s.string().max(50000),
       })
       .default({ en: "", zh: "" }),
+    // 「分享」页可编辑文案（双语，缺失时页面回退到字典默认值）
+    shareSubtitle: s
+      .object({
+        en: s.string().max(200),
+        zh: s.string().max(200),
+      })
+      .default({ en: "", zh: "" }),
+    shareSubscribeHint: s
+      .object({
+        en: s.string().max(200),
+        zh: s.string().max(200),
+      })
+      .default({ en: "", zh: "" }),
   }),
 });
 
 const posts = defineCollection({
   name: "Post",
-  pattern: ["posts/**/*.md"],
+  pattern: ["posts/**/*.md", "projects/**/*.md"],
   schema: s
     .object({
       title: s.string().max(99),

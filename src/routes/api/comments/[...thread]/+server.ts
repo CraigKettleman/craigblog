@@ -1,4 +1,5 @@
 import { error, json, type RequestHandler } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
 import {
   cleanText,
   createComment,
@@ -27,6 +28,22 @@ export const GET: RequestHandler = async ({ params, url, request }) => {
   if (!thread || thread.length > MAX_THREAD) throw error(400, "bad thread");
   const sort = (url.searchParams.get("sort") ?? "newest") as SortOrder;
   if (sort !== "newest" && sort !== "hot") throw error(400, "bad sort");
+
+  // 本地镜像环境（pnpm admin）：评论是服务器上的运行时数据（data/comments.json），
+  // 本地没有 → 只读代理线上数据，让编辑时能看到真实评论；离线则回退本地。
+  // 写操作（发评论/投票）仍走本地存储，不写生产。
+  if (env.LOCAL_ADMIN === "1") {
+    try {
+      const origin = env.SITE_ORIGIN || "https://hhy.homes";
+      const remote = await fetch(`${origin}/api/comments/${thread}?sort=${sort}`, {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (remote.ok) return json(await remote.json());
+    } catch {
+      /* 线上不可达时回退本地文件 */
+    }
+  }
+
   const session = verify(request.headers.get("authorization"));
   return json(await listThread(thread, sort, session?.login));
 };

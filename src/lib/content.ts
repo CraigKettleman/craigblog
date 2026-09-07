@@ -1,7 +1,7 @@
 import { categories as allCategories, posts as allPosts } from "#velite";
 import type { Language } from "$lib/dictionaries";
 
-export const sections = ["posts"] as const;
+export const sections = ["posts", "projects"] as const;
 
 export type Section = (typeof sections)[number];
 
@@ -59,6 +59,7 @@ export type PostListItem = Pick<
   | "description"
   | "categories"
   | "permalink"
+  | "draft"
 >;
 
 export function toListItem(post: Post): PostListItem {
@@ -71,6 +72,7 @@ export function toListItem(post: Post): PostListItem {
     description: post.description,
     categories: post.categories,
     permalink: post.permalink,
+    draft: post.draft,
   };
 }
 

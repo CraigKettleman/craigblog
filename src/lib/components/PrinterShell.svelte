@@ -4,14 +4,17 @@
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
   import type { Dictionary, Language } from "$lib/dictionaries";
+  import { isLanguage } from "$lib/dictionaries";
   import { siteMeta } from "$lib/site";
+  import { getEditMode } from "$lib/admin-state.svelte";
+  import { saveSite } from "$lib/admin-save";
   import PrinterSnail from "./PrinterSnail.svelte";
   import SocialHoverCard from "./SocialHoverCard.svelte";
   import RotaryDial from "./RotaryDial.svelte";
   import LightSwitch from "./LightSwitch.svelte";
   import Stickers from "./Stickers.svelte";
   import Icon from "./Icon.svelte";
-  import SubmitPostModal from "./SubmitPostModal.svelte";
+  import EditableText from "./admin/EditableText.svelte";
 
   type ColorMode = "system" | "light" | "dark";
 
@@ -28,7 +31,15 @@
   } = $props();
 
   let site = $derived(siteMeta(lang));
-  let submitOpen = $state(false);
+  let editing = $derived(admin && getEditMode());
+
+  async function saveBrandName(v: string) {
+    await saveSite({ brandName: { [lang]: v } });
+  }
+
+  async function saveBrandTagline(v: string) {
+    await saveSite({ brandTagline: { [lang]: v } });
+  }
 
   let navItems = $derived([
     { label: dictionary.labels.home, href: dictionary.urls.home },
@@ -114,8 +125,18 @@
 
   function switchToLanguage(newLang: string) {
     if (newLang === displayLang) return;
-    const rest = page.url.pathname.split("/").slice(2);
-    const newPath = `/${newLang}${rest.length ? `/${rest.join("/")}` : ""}`;
+    const first = page.url.pathname.split("/")[1];
+    let newPath: string;
+    if (isLanguage(first)) {
+      const rest = page.url.pathname.split("/").slice(2);
+      newPath = `/${newLang}${rest.length ? `/${rest.join("/")}` : ""}`;
+    } else {
+      // 非本地化路由（如 /studio/submit）：保持路径不变，用 ?lang= 切换界面语言，
+      // 直接拼 /{lang}/... 会拼出不存在的 404 地址
+      const url = new URL(page.url.href);
+      url.searchParams.set("lang", newLang);
+      newPath = url.pathname + url.search;
+    }
     displayLang = newLang;
     pendingNavHref = null;
     clearTimeout(langSwitchTimer);
@@ -224,12 +245,22 @@
               <div
                 class="font-mono text-sm font-bold tracking-[0.25em] text-printer-ink dark:text-printer-ink-dark uppercase"
               >
-                {site.brandName}
+                <EditableText
+                  editing={editing}
+                  value={site.brandName}
+                  onsave={saveBrandName}
+                  maxlength={30}
+                />
               </div>
               <div
                 class="font-mono text-[9px] tracking-[0.1em] text-printer-ink-light dark:text-printer-ink-dark/40 uppercase mt-0.5"
               >
-                {site.brandTagline}
+                <EditableText
+                  editing={editing}
+                  value={site.brandTagline}
+                  onsave={saveBrandTagline}
+                  maxlength={60}
+                />
               </div>
             </div>
           </div>
@@ -279,14 +310,14 @@
           <div class="sm:hidden h-[1px] bg-black/10 dark:bg-white/10"></div>
           <div class="flex items-center justify-end gap-5 shrink-0 py-1">
             {#if admin}
-              <button
-                onclick={() => submitOpen = true}
-                class="printer-btn whitespace-nowrap !bg-orange-500 hover:!bg-orange-600 !text-white border-transparent flex items-center gap-1.5"
-                title="投稿"
+              <a
+                href={`/studio/submit?lang=${lang}`}
+                class="printer-btn whitespace-nowrap !bg-printer-accent/80 hover:!bg-printer-accent dark:!bg-printer-accent-dark/80 dark:hover:!bg-printer-accent-dark !text-white border-transparent flex items-center gap-1.5"
+                title={lang === "zh" ? "投稿" : "Submit"}
               >
-                <Icon name="upload" class="w-3.5 h-3.5" />
-                <span class="leading-none">投稿</span>
-              </button>
+                <Icon name="pen" class="w-3.5 h-3.5" />
+                <span class="leading-none">{lang === "zh" ? "投稿" : "Submit"}</span>
+              </a>
             {/if}
             <RotaryDial
               options={[
@@ -434,7 +465,3 @@
     </div>
   </div>
 </div>
-
-{#if submitOpen}
-  <SubmitPostModal {lang} onclose={() => submitOpen = false} />
-{/if}

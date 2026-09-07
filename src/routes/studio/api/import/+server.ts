@@ -13,7 +13,7 @@ function guard() {
 export const prerender = false;
 
 interface ImportBody {
-  section: "posts";
+  section: "posts" | "projects";
   lang: "en" | "zh";
   markdown: string;
   title?: string;
@@ -42,7 +42,7 @@ export const POST: RequestHandler = async ({ request }) => {
   guard();
   const body = (await request.json()) as ImportBody;
   if (!body.markdown) throw error(400, "markdown required");
-  if (body.section !== "posts") {
+  if (body.section !== "posts" && body.section !== "projects") {
     throw error(400, "invalid section");
   }
   if (body.lang !== "en" && body.lang !== "zh") {
@@ -93,7 +93,7 @@ export const POST: RequestHandler = async ({ request }) => {
     body.wechatLink ??
     (typeof parsed.wechatLink === "string" ? parsed.wechatLink : undefined);
 
-  const sectionDir = "posts";
+  const sectionDir = body.section;
   const dirName = `${date}-${slug}`;
   const postDir = join(CONTENT, sectionDir, dirName);
 

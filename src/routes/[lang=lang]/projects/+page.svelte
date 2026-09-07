@@ -1,17 +1,25 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { getDictionary, type Language } from "$lib/dictionaries";
+  import { getEditMode } from "$lib/admin-state.svelte";
   import { siteMeta } from "$lib/site";
   import Icon from "$lib/components/Icon.svelte";
+  import PostList from "$lib/components/PostList.svelte";
   import PrintedDivider from "$lib/components/PrintedDivider.svelte";
   import PrintedLabel from "$lib/components/PrintedLabel.svelte";
   import PrintedPageTitle from "$lib/components/PrintedPageTitle.svelte";
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Seo from "$lib/components/Seo.svelte";
+  import CategoryAdmin from "$lib/components/admin/CategoryAdmin.svelte";
+
+  let { data } = $props();
 
   let lang = $derived(page.params.lang as Language);
   let dictionary = $derived(getDictionary(lang));
   let site = $derived(siteMeta(lang));
+  let admin = $derived(!!page.data.admin);
+  let editing = $derived(admin && getEditMode());
+  let projectPosts = $derived(data.projectPosts);
 
   let primaryWorks = $derived(dictionary.works.filter((work) => work.primary));
   let otherWorks = $derived(dictionary.works.filter((work) => !work.primary));
@@ -156,6 +164,29 @@
         {/each}
       </div>
     </details>
+  {/if}
+
+  <!-- Project updates（项目内容管线）：编辑态含新文章入口与分类管理 -->
+  {#if editing || projectPosts.length > 0}
+    <PrintedSection label={dictionary.labels.latestTech} labelIcon="window">
+      {#if editing}
+        <div class="mb-3 flex justify-end">
+          <a
+            href="/studio/submit?lang={lang}&section=projects"
+            class="rounded-sm border border-printer-accent/50 bg-printer-accent/5 dark:bg-printer-accent-dark/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-printer-accent hover:bg-printer-accent/10 dark:border-printer-accent-dark/50 dark:text-printer-accent-dark dark:hover:bg-printer-accent-dark/20"
+          >
+            ＋ 新文章
+          </a>
+        </div>
+      {/if}
+      <PostList posts={projectPosts} {lang} editable={editing} />
+    </PrintedSection>
+
+    {#if editing}
+      <PrintedSection label={dictionary.labels.categories} labelIcon="tag">
+        <CategoryAdmin {lang} section="projects" categories={data.categories} />
+      </PrintedSection>
+    {/if}
   {/if}
 
   <PrintedDivider style="dashed" />

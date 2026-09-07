@@ -6,11 +6,14 @@
     posts,
     lang,
     compact = false,
+    editable = false,
   }: {
     posts: PostListItem[];
     lang: string;
     /** Tighter rows without separators (used on the home page). */
     compact?: boolean;
+    /** 可编辑模式：为草稿条目显示标记。 */
+    editable?: boolean;
   } = $props();
 </script>
 
@@ -28,6 +31,9 @@
             class="font-mono text-[10px] text-printer-ink-light dark:text-printer-ink-dark/40 tabular-nums mb-1"
           >
             {displayDate(post.date, lang)}
+            {#if editable && post.draft}
+              <span class="text-printer-accent dark:text-printer-accent-dark">· 草稿</span>
+            {/if}
           </div>
           <h3
             class="font-serif text-base text-printer-ink dark:text-printer-ink-dark group-hover:text-printer-accent dark:group-hover:text-printer-accent-dark transition-colors leading-snug"

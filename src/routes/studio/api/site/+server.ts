@@ -24,6 +24,8 @@ interface SiteData {
   brandName: Bilingual<string>;
   brandTagline: Bilingual<string>;
   about: Bilingual<string>;
+  shareSubtitle: Bilingual<string>;
+  shareSubscribeHint: Bilingual<string>;
 }
 
 function parseSiteYml(raw: string): SiteData {
@@ -34,6 +36,8 @@ function parseSiteYml(raw: string): SiteData {
     brandName: { en: "", zh: "" },
     brandTagline: { en: "", zh: "" },
     about: { en: "", zh: "" },
+    shareSubtitle: { en: "", zh: "" },
+    shareSubscribeHint: { en: "", zh: "" },
   };
   const lines = raw.split(/\r?\n/);
   let topKey = "" as keyof SiteData;
@@ -129,6 +133,8 @@ function serializeSiteYml(data: SiteData): string {
     biScalar("brandName", data.brandName),
     biScalar("brandTagline", data.brandTagline),
     biScalar("about", data.about),
+    biScalar("shareSubtitle", data.shareSubtitle),
+    biScalar("shareSubscribeHint", data.shareSubscribeHint),
   ].join("");
 }
 
@@ -157,6 +163,8 @@ export const PUT: RequestHandler = async ({ request }) => {
       brandName: { en: "Craig", zh: "Craig" },
       brandTagline: { en: "Personal Website", zh: "个人主页" },
       about: { en: "", zh: "" },
+      shareSubtitle: { en: "", zh: "" },
+      shareSubscribeHint: { en: "", zh: "" },
     };
   }
   const merged: SiteData = {
@@ -169,6 +177,11 @@ export const PUT: RequestHandler = async ({ request }) => {
     brandName: { ...existing.brandName, ...(body.brandName ?? {}) },
     brandTagline: { ...existing.brandTagline, ...(body.brandTagline ?? {}) },
     about: { ...existing.about, ...(body.about ?? {}) },
+    shareSubtitle: { ...existing.shareSubtitle, ...(body.shareSubtitle ?? {}) },
+    shareSubscribeHint: {
+      ...existing.shareSubscribeHint,
+      ...(body.shareSubscribeHint ?? {}),
+    },
   };
   const content = serializeSiteYml(merged);
   await mkdir(dirname(SITE_FILE), { recursive: true });

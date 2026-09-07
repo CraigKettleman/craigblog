@@ -26,8 +26,8 @@ if [ ! -d build ]; then
   echo "ERROR: 找不到 build/。请先把 svelte.config.js 换成 @sveltejs/adapter-node，再运行 pnpm build。"
   exit 1
 fi
-echo "==> 本地构建 (Node adapter)"
-pnpm build
+echo "==> 本地构建 (Node adapter，剥离 LOCAL_ADMIN，防止编辑界面泄漏进生产)"
+env -u LOCAL_ADMIN pnpm build
 
 # ── 2. SSH/rsync 传输方式 ─────────────────────────────────────────────────
 # 优先用 deploy key；没有 key 时回退到密码（SSH_PASS，需 sshpass）。
