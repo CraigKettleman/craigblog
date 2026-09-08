@@ -36,6 +36,7 @@ const dictionary: Dictionary = {
     projects: "项目",
     posts: "分享",
     about: "更多",
+    studio: "看板",
     latestTech: "最新",
     myProjects: "我的项目",
     recommended: "推荐",

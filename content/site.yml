@@ -7,8 +7,9 @@ motto:
   zh: "Attention is all i need."
 mottos:
   en:
-    - "Attention is all i need."
-  zh: []
+    - "All I need is to pay attention."
+  zh:
+    - "我需要收集注意力。"
 brandName:
   en: "Craig"
   zh: "Craig"
@@ -18,3 +19,9 @@ brandTagline:
 about:
   en: "This is the personal space of [Craig](https://hhy.homes).\n\nUpdated irregularly. Content is being prepared — check back later."
   zh: "这里是 [Craig](https://hhy.homes) 的个人空间。\n\n不定期更新。内容筹备中，敬请期待。"
+shareSubtitle:
+  en: ""
+  zh: ""
+shareSubscribeHint:
+  en: ""
+  zh: ""

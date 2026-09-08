@@ -148,6 +148,15 @@
     border-radius: 0 !important;
   }
 
+  /* 后台看板里的实体控件不参与纸面直角规则：
+     按钮保持外壳同款圆角，旋钮保持正圆（与打印机头部的导航按钮一致） */
+  .printer-content-area .printer-btn {
+    border-radius: 0.375rem !important;
+  }
+  .printer-content-area .rotary-dial-knob {
+    border-radius: 9999px !important;
+  }
+
   /* Keep borders on visual assets, but make them very subtle */
   .printer-content-area img,
   .printer-content-area svg {

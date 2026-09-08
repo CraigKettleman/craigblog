@@ -8,6 +8,7 @@
   } from "$lib/dictionaries";
   import PrinterShell from "$lib/components/PrinterShell.svelte";
   import AdminBar from "$lib/components/AdminBar.svelte";
+  import { trackView } from "$lib/analytics-client";
 
   let { children } = $props();
 
@@ -24,6 +25,11 @@
 
   $effect(() => {
     document.documentElement.lang = lang;
+  });
+
+  // 匿名访问信标：首载与 SPA 跳转各计一次真实 PV
+  $effect(() => {
+    trackView(page.url.pathname, lang);
   });
 </script>
 

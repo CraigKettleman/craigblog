@@ -96,6 +96,7 @@ const dictionary = {
     projects: "Project",
     posts: "Share",
     about: "More",
+    studio: "Stats",
     latestTech: "Latest",
     myProjects: "My Projects",
     recommended: "Recommended",

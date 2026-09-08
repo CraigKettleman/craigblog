@@ -46,6 +46,9 @@
     { label: dictionary.labels.share, href: dictionary.urls.share },
     { label: dictionary.labels.projects, href: dictionary.urls.projects },
     { label: dictionary.labels.about, href: dictionary.urls.about },
+    // 数据看板与主页平行：仅本地后台（LOCAL_ADMIN dev）在「更多」右侧多一枚按钮，
+    // 生产构建 admin 恒为 false，公网导航不出现。
+    ...(admin ? [{ label: dictionary.labels.studio, href: `/studio/dashboard?lang=${lang}` }] : []),
   ]);
 
   // ------------------------------------------------------------------
@@ -55,15 +58,16 @@
 
   function isActive(href: string): boolean {
     const pathname = page.url.pathname;
-    if (href === dictionary.urls.home) return pathname === href;
+    const base = href.split("?")[0];
+    if (base === dictionary.urls.home) return pathname === base;
     // 技术文章挂在 /{lang}/posts，但归属「分享」页。
     if (
-      href === dictionary.urls.share &&
+      base === dictionary.urls.share &&
       pathname.startsWith(`/${lang}/posts`)
     ) {
       return true;
     }
-    return pathname.startsWith(href);
+    return pathname.startsWith(base);
   }
 
   function onNavPress(href: string) {

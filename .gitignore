@@ -16,6 +16,9 @@ vite.config.ts.timestamp-*
 *.log
 *.tsbuildinfo
 
+# 本地访问统计数据（真实事件，不入库）
+/data
+
 # local env files
 .env
 .env.*
