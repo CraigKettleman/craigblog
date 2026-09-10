@@ -17,6 +17,8 @@
   import PrintedLabel from "$lib/components/PrintedLabel.svelte";
   import PrintedSection from "$lib/components/PrintedSection.svelte";
   import Seo from "$lib/components/Seo.svelte";
+  import TableOfContents from "$lib/components/TableOfContents.svelte";
+  import DitherImage from "$lib/components/DitherImage.svelte";
   import EditableText from "$lib/components/admin/EditableText.svelte";
   import EditableMarkdown from "$lib/components/admin/EditableMarkdown.svelte";
 
@@ -163,7 +165,7 @@
   ]}
 />
 
-<div>
+<div class="mx-auto w-full max-w-[37.5rem]">
   <!-- Post header -->
   <PrintedSection>
     {#if editing}
@@ -221,8 +223,22 @@
         {/each}
       {/if}
     </div>
+    {#if post.cover}
+      <!-- 拍立得封面：collage 模式 —— 入场 voronoi 闪烁，点击在照片 ⇄ 抖动画间切换 -->
+      <figure class="post-cover-frame">
+        <span class="post-cover-photo">
+          <DitherImage src={post.cover.src} mode="collage" alt={post.title} />
+        </span>
+        <figcaption
+          class="truncate font-mono text-[9px] uppercase tracking-wider text-printer-ink-light dark:text-printer-ink-dark/40"
+        >
+          {post.title}
+        </figcaption>
+      </figure>
+    {/if}
+
     <h1
-      class="font-serif text-2xl font-bold text-printer-ink dark:text-printer-ink-dark leading-tight"
+      class="font-serif text-3xl sm:text-4xl font-bold text-printer-ink dark:text-printer-ink-dark leading-tight tracking-tight"
     >
       <EditableText
         editing={editing}
@@ -231,35 +247,84 @@
         maxlength={99}
       />
     </h1>
-    <div class="flex items-center gap-3 mt-2 flex-wrap">
-      <span
-        class="font-mono text-[10px] text-printer-ink-light dark:text-printer-ink-dark/40 tabular-nums"
-      >
-        <EditableText
-          editing={editing}
-          type="date"
-          value={post.date.slice(0, 10)}
-          display={displayDate(post.date, lang)}
-          onsave={saveDate}
-          inputClass="font-mono text-[10px] text-printer-ink dark:text-printer-ink-dark/60"
-        />
-      </span>
-      {#if data.translations.length > 0}
-        <div class="flex items-center gap-2">
+
+    <!-- 规格铭牌（参考 cali.so）：编号 / 日期 / 时长 / 字数 -->
+    <dl
+      class="mt-5 grid grid-cols-2 gap-x-6 gap-y-4 border-y border-printer-ink/10 dark:border-printer-ink-dark/10 py-4 sm:grid-cols-4"
+    >
+      <div>
+        <dt
+          class="font-mono text-[9px] uppercase tracking-wider text-printer-ink-light dark:text-printer-ink-dark/40"
+        >
+          {lang === "zh" ? "编号" : "No."}
+        </dt>
+        <dd
+          class="mt-1.5 flex items-center gap-1.5 font-mono text-sm text-printer-ink dark:text-printer-ink-dark tabular-nums"
+        >
           <span
-            class="font-mono text-[10px] text-printer-ink-light dark:text-printer-ink-dark/40"
+            class="inline-block h-1.5 w-1.5 bg-printer-accent dark:bg-printer-accent-dark"
+            aria-hidden="true"
+          ></span>
+          {data.postNumber}
+        </dd>
+      </div>
+      <div>
+        <dt
+          class="font-mono text-[9px] uppercase tracking-wider text-printer-ink-light dark:text-printer-ink-dark/40"
+        >
+          {lang === "zh" ? "日期" : "Date"}
+        </dt>
+        <dd
+          class="mt-1.5 font-mono text-sm text-printer-ink dark:text-printer-ink-dark tabular-nums"
+        >
+          <EditableText
+            editing={editing}
+            type="date"
+            value={post.date.slice(0, 10)}
+            display={displayDate(post.date, lang)}
+            onsave={saveDate}
+            inputClass="font-mono text-sm text-printer-ink dark:text-printer-ink-dark/60"
+          />
+        </dd>
+      </div>
+      <div>
+        <dt
+          class="font-mono text-[9px] uppercase tracking-wider text-printer-ink-light dark:text-printer-ink-dark/40"
+        >
+          {lang === "zh" ? "时长" : "Read"}
+        </dt>
+        <dd
+          class="mt-1.5 font-mono text-sm text-printer-ink dark:text-printer-ink-dark tabular-nums"
+        >
+          {lang === "zh"
+            ? `${data.readingMinutes} 分钟`
+            : `${data.readingMinutes} min`}
+        </dd>
+      </div>
+      <div>
+        <dt
+          class="font-mono text-[9px] uppercase tracking-wider text-printer-ink-light dark:text-printer-ink-dark/40"
+        >
+          {lang === "zh" ? "字数" : "Words"}
+        </dt>
+        <dd
+          class="mt-1.5 font-mono text-sm text-printer-ink dark:text-printer-ink-dark tabular-nums"
+        >
+          {data.wordCount}
+        </dd>
+      </div>
+    </dl>
+
+    <div class="flex items-center gap-3 mt-3 flex-wrap">
+      {#if data.translations.length > 0}
+        {#each data.translations as translation (translation.lang)}
+          <a
+            class="font-mono text-[10px] text-printer-accent dark:text-printer-accent-dark hover:underline"
+            href={translation.permalink}
           >
-            |
-          </span>
-          {#each data.translations as translation (translation.lang)}
-            <a
-              class="font-mono text-[10px] text-printer-accent dark:text-printer-accent-dark hover:underline"
-              href={translation.permalink}
-            >
-              {languageLabels[translation.lang]}
-            </a>
-          {/each}
-        </div>
+            {languageLabels[translation.lang]}
+          </a>
+        {/each}
       {:else if editing}
         <!-- 双语文章由同 slug 的 en.md/zh.md 组成；缺另一语言时可就地创建 -->
         <button
@@ -271,6 +336,7 @@
         </button>
       {/if}
     </div>
+
     {#if post.description || editing}
       <p
         class="font-serif text-xs text-printer-ink-light dark:text-printer-ink-dark/50 mt-2 leading-relaxed"
@@ -357,3 +423,6 @@
     <PostAdvertising advertisements={dictionary.postAdvertisements} />
   </PrintedSection>
 </div>
+
+<!-- 目录：固定在纸面外的页面左侧（TableOfContents 自带 fixed 定位与显示断点） -->
+<TableOfContents items={data.toc} title={post.title} {lang} backHref={dictionary.urls[data.section]} />

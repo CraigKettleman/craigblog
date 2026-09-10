@@ -1,3 +1,4 @@
+import rehypeSlug from "rehype-slug";
 import rehypePrettyCode from "rehype-pretty-code";
 import { defineCollection, defineConfig, s } from "velite";
 
@@ -109,6 +110,30 @@ const site = defineCollection({
   }),
 });
 
+/**
+ * 为每张正文图片按 src 哈希注入确定性微倾斜（-1° ~ +1°），
+ * 由 .post-content img 的 CSS 读取 --img-tilt 应用（参考 cali.so 的图片倾斜排版）。
+ */
+function rehypeImageTilt(): (tree: unknown) => void {
+  const visit = (node: unknown) => {
+    const n = node as {
+      type?: string;
+      tagName?: string;
+      properties?: Record<string, unknown>;
+      children?: unknown[];
+    };
+    if (n.type === "element" && n.tagName === "img") {
+      const src = String(n.properties?.src ?? "");
+      let hash = 0;
+      for (const ch of src) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
+      const tilt = ((Math.abs(hash) % 5) - 2) * 0.5; // -1 | -0.5 | 0 | 0.5 | 1
+      n.properties = { ...n.properties, style: `--img-tilt:${tilt}deg` };
+    }
+    if (Array.isArray(n.children)) n.children.forEach(visit);
+  };
+  return (tree) => visit(tree);
+}
+
 const posts = defineCollection({
   name: "Post",
   pattern: ["posts/**/*.md", "projects/**/*.md"],
@@ -153,9 +178,17 @@ export default defineConfig({
     base: "/blog/",
     name: "[name]-[hash:6].[ext]",
     clean: true,
+    // VELITE_STAGING=1 时构建到临时目录：deploy 的全量构建与本机 dev server
+    // 并发运行，直接清空 .velite 会让 dev SSR 撞上中间态（site.json 缺失）。
+    // 构建成功后由 vite 插件原子换入，失败则旧数据原封不动。
+    ...(process.env.VELITE_STAGING === "1"
+      ? { data: ".velite-next", assets: "static/blog-next" }
+      : {}),
   },
   collections: { site, categories, posts },
-  markdown: { rehypePlugins: [rehypePrettyCode] },
+  markdown: {
+    rehypePlugins: [rehypeSlug, rehypePrettyCode, rehypeImageTilt],
+  },
   prepare: ({ categories, posts }) => {
     const unknownCategories = posts
       .flatMap((post) =>

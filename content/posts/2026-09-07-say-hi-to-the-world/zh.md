@@ -4,6 +4,7 @@ slug: "say-hi-to-the-world"
 lang: "zh"
 date: "2026-09-07"
 draft: false
+cover: "./cover.jpg"
 featured: false
 categories: []
 ---

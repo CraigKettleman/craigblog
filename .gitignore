@@ -8,7 +8,11 @@ vite.config.ts.timestamp-*
 
 # Velite (generated content data + copied assets)
 /.velite
+/.velite-next
+/.velite.prev
 /static/blog
+/static/blog-next
+/static/blog.prev
 
 # misc
 .DS_Store

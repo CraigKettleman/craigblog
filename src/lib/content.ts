@@ -57,6 +57,7 @@ export type PostListItem = Pick<
   | "section"
   | "date"
   | "description"
+  | "cover"
   | "categories"
   | "permalink"
   | "draft"
@@ -70,6 +71,7 @@ export function toListItem(post: Post): PostListItem {
     section: post.section,
     date: post.date,
     description: post.description,
+    cover: post.cover,
     categories: post.categories,
     permalink: post.permalink,
     draft: post.draft,
