@@ -121,3 +121,27 @@ export function findCategory(
     (category) => category.section === section && category.slug === slug,
   );
 }
+
+/**
+ * 系列内的「下一篇」。
+ *
+ * 《智能体 AI 漫游指南》按章节拆成多篇，属于同一分类且同语言。
+ * 站点的发布日期按阅读顺序逐日递增，因此按日期升序取当前篇的下一章即可；
+ * 末篇返回 undefined。仅对注册了该分类的文章生效，其余文章不受影响。
+ */
+export function nextInSeries(post: Post): Post | undefined {
+  const SERIES_CATEGORIES = ["hitchhiker-agentic-ai"];
+  if (!post.categories.some((slug) => SERIES_CATEGORIES.includes(slug))) {
+    return undefined;
+  }
+  const siblings = posts
+    .filter(
+      (other) =>
+        other.lang === post.lang &&
+        other.section === post.section &&
+        other.categories.some((slug) => SERIES_CATEGORIES.includes(slug)),
+    )
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const index = siblings.findIndex((other) => other.path === post.path);
+  return index >= 0 ? siblings[index + 1] : undefined;
+}

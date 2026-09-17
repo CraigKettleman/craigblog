@@ -115,15 +115,58 @@
     color: var(--color-printer-paper-dark);
   }
 
-  /* Top inner shadow to simulate printer head blocking some light */
+  /* app.html 预置的走纸起点：JS 启动前先把纸藏在出纸口内侧，避免首屏闪出完整页面 */
+  :root.paper-preload .printer-paper-sheet {
+    transform: translateY(-100%);
+  }
+
+  /* 出纸缝：机身下方的独立元素，高度 = 缝以上的壳面 7px + 缝的上沿 1px。
+     滚动时先随机身一起上移，到视口顶部后就钉住不动，纸张从它身后上滑，
+     看起来像打印机在回收纸张。
+     偏好减少动效时不做钉住，保持原来的普通滚动。 */
+  .printer-slit-bar {
+    position: relative;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .printer-slit-bar {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  /* 缝的下半截 + 下面的壳面（下唇）：纸张从缝里出来后压在这一条上，所以必须画在
+     纸张之下（纸张 z-20，这里不给 z-index，靠 DOM 顺序压在它下面），同时仍要跟着
+     出纸口一起钉住：它在文档流里紧接横条，钉住阈值就是横条的高度。
+     外阴影与机身一致（但不带顶部内高光，否则会在缝中间画出一条亮线）。 */
+  .printer-slit-lip {
+    position: relative;
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  :is(.dark) .printer-slit-lip {
+    box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.5),
+      0 8px 40px rgba(100, 120, 255, 0.03),
+      0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .printer-slit-lip {
+      position: sticky;
+      top: 8px;
+    }
+  }
+
+  /* 打印机头挡光：挂在出纸缝上沿（纸张可见顶缘就在这条线上），随出纸口钉住不动。
+     顶部与纸张可见顶缘齐平，所以用回原渐变本身。
+     它靠父级 .printer-slit-bar 的 z-index 压在纸张之上。 */
   .paper-top-occlusion {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 100%;
+    left: 12px;
+    right: 12px;
     height: 52px;
     pointer-events: none;
-    z-index: 15;
     background: linear-gradient(
       to bottom,
       rgba(0, 0, 0, 0.12) 0%,
@@ -133,6 +176,12 @@
       rgba(0, 0, 0, 0) 100%
     );
     mix-blend-mode: multiply;
+  }
+  @media (min-width: 640px) {
+    .paper-top-occlusion {
+      left: 40px;
+      right: 40px;
+    }
   }
   :is(.dark) .paper-top-occlusion {
     background: linear-gradient(
@@ -222,8 +271,7 @@
   .printer-paper-area:has([data-not-found]) > .absolute.-top-1 {
     display: none;
   }
-  .printer-paper-wrap:has(.printer-paper-area [data-not-found])
-    > .paper-top-occlusion {
+  .printer-stack:has(.printer-paper-area [data-not-found]) .paper-top-occlusion {
     display: none;
   }
   .printer-paper-area:has([data-not-found]) > .absolute.left-0.top-0.bottom-0,
@@ -495,13 +543,19 @@
   .post-toc {
     display: none;
     position: fixed;
-    top: 14.5rem; /* 与打印口（纸面顶缘）对齐 */
+    /* 垂直居中：目录作为一个整体停在视口中间，而不是顶部对齐。
+       用 top/bottom 对拉 + margin auto 实现，内容超出时仍可滚动。 */
+    top: 0;
+    bottom: 0;
+    margin-top: auto;
+    margin-bottom: auto;
     left: 1.5rem;
     z-index: 30;
     width: 14rem;
-    max-height: calc(100dvh - 16rem);
+    height: fit-content;
+    max-height: min(80dvh, calc(100dvh - 6rem));
     flex-direction: column;
-    padding: 0 0.5rem 1rem 0;
+    padding: 0 0.5rem 0 0;
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scrollbar-width: none;
@@ -808,13 +862,13 @@
       var(--color-printer-paper-dark);
   }
 
-  /* 正文图片：确定性微倾斜（--img-tilt 由 velite rehype 插件注入），hover 回正 */
+  /* 正文图片：hover 平滑放大（不倾斜）；点击由 ImageLightbox 单独打开大图 */
   .post-content img {
-    transform: rotate(var(--img-tilt, 0deg));
-    transition: transform 300ms var(--ease-swift);
+    transition: transform 320ms var(--ease-swift);
+    cursor: zoom-in;
   }
   .post-content img:hover {
-    transform: rotate(calc(var(--img-tilt, 0deg) * 0.3));
+    transform: scale(1.02);
   }
   @media (prefers-reduced-motion: reduce) {
     .post-thumb-veil,
@@ -823,6 +877,9 @@
     .post-cover-frame,
     .post-content img {
       transition: none;
+    }
+    .post-content img:hover {
+      transform: none;
     }
   }
 }
@@ -1052,5 +1109,532 @@
   }
   50% {
     opacity: 0.55;
+  }
+}
+
+/* ============================================================
+   《智能体 AI 漫游指南》正文排版
+   ============================================================
+   这批文章由 arXiv HTML 版（LaTeXML 产出）转换而来，带有源文档的结构类：
+   原生 MathML 公式、表格、代码清单，以及自测题、缩略语表等重构后的块。
+   Prose 默认样式无法覆盖这些块，这里按打印机风格补齐。
+   ============================================================ */
+@layer components {
+  /* 篇首分部说明：纸面上的「卷标」 */
+  .post-content .hh-part {
+    margin: 1.75rem 0 2rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid
+      color-mix(in oklab, var(--color-printer-ink) 12%, transparent);
+    border-left-width: 3px;
+    border-left-color: var(--color-printer-accent);
+    background:
+      repeating-linear-gradient(
+        45deg,
+        color-mix(in oklab, var(--color-printer-accent) 7%, transparent) 0 1px,
+        transparent 1px 6px
+      ),
+      var(--color-printer-paper);
+  }
+  :is(.dark) .post-content .hh-part {
+    border-color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 14%,
+      transparent
+    );
+    background:
+      repeating-linear-gradient(
+        45deg,
+        color-mix(in oklab, var(--color-printer-accent-dark) 8%, transparent)
+          0 1px,
+        transparent 1px 6px
+      ),
+      var(--color-printer-paper-dark);
+  }
+  .post-content .hh-part-title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-printer-accent);
+  }
+  :is(.dark) .post-content .hh-part-title {
+    color: var(--color-printer-accent-dark);
+  }
+  .post-content .hh-part-scope {
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--color-printer-ink) 70%, transparent);
+  }
+  :is(.dark) .post-content .hh-part-scope {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 70%,
+      transparent
+    );
+  }
+
+  /* 篇尾「下一篇」提示：沿用纸面刻度线风格 */
+  .post-content .hh-next {
+    margin: 2.5rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px dashed
+      color-mix(in oklab, var(--color-printer-ink) 18%, transparent);
+  }
+  :is(.dark) .post-content .hh-next {
+    border-top-color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 20%,
+      transparent
+    );
+  }
+  .post-content .hh-next-label {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-printer-ink-light);
+  }
+  :is(.dark) .post-content .hh-next-label {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 45%,
+      transparent
+    );
+  }
+  .post-content .hh-next-title {
+    margin: 0.35rem 0 0;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--color-printer-ink);
+  }
+  :is(.dark) .post-content .hh-next-title {
+    color: var(--color-printer-ink-dark);
+  }
+  .post-content .hh-next-hint {
+    margin: 0.25rem 0 0;
+    font-size: 0.72rem;
+    color: var(--color-printer-ink-light);
+  }
+  :is(.dark) .post-content .hh-next-hint {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 45%,
+      transparent
+    );
+  }
+
+  /* 图注 / 表注：沿用源文档的「图 1：」标签语气 */
+  .post-content .hh-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--color-printer-accent);
+    margin-right: 0.25rem;
+  }
+  :is(.dark) .post-content .hh-tag {
+    color: var(--color-printer-accent-dark);
+  }
+  .post-content figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--color-printer-ink) 60%, transparent);
+  }
+  :is(.dark) .post-content figcaption {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 60%,
+      transparent
+    );
+  }
+  .post-content .hh-table-caption {
+    margin-top: 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--color-printer-ink) 60%, transparent);
+  }
+  :is(.dark) .post-content .hh-table-caption {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 60%,
+      transparent
+    );
+  }
+
+  /* 表格：源文档是多栏技术表，窄屏横向滚动而不是压缩变形 */
+  .post-content .hh-table {
+    margin: 1.75rem 0;
+    overflow-x: auto;
+  }
+  .post-content .hh-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+  .post-content .hh-table th,
+  .post-content .hh-table td {
+    padding: 0.45rem 0.6rem;
+    border-bottom: 1px solid
+      color-mix(in oklab, var(--color-printer-ink) 10%, transparent);
+    vertical-align: top;
+    text-align: left;
+  }
+  :is(.dark) .post-content .hh-table th,
+  :is(.dark) .post-content .hh-table td {
+    border-bottom-color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 12%,
+      transparent
+    );
+  }
+  .post-content .hh-table thead th {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    border-bottom-width: 2px;
+  }
+
+  /* 独立公式：居中，右侧保留源文档编号 */
+  .post-content .hh-equation {
+    position: relative;
+    margin: 1.75rem 0;
+    padding: 0.25rem 2.5rem;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .post-content .hh-equation-number {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-printer-ink-light);
+  }
+  :is(.dark) .post-content .hh-equation-number {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 45%,
+      transparent
+    );
+  }
+
+  /* 行内 MathML：与正文基线对齐，避免撑高行距 */
+  .post-content math {
+    font-size: 1.02em;
+  }
+  .post-content math[display="block"] {
+    font-size: 1.15em;
+  }
+
+  /* 缩略语表：词条 + 释义 */
+  .post-content .hh-glossary {
+    margin: 1.75rem 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+  .post-content .hh-glossary-item {
+    display: grid;
+    grid-template-columns: minmax(6rem, 9rem) 1fr;
+    gap: 0.75rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px dotted
+      color-mix(in oklab, var(--color-printer-ink) 12%, transparent);
+  }
+  :is(.dark) .post-content .hh-glossary-item {
+    border-bottom-color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 14%,
+      transparent
+    );
+  }
+  .post-content .hh-glossary-item dt {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--color-printer-ink);
+  }
+  :is(.dark) .post-content .hh-glossary-item dt {
+    color: var(--color-printer-ink-dark);
+  }
+  .post-content .hh-glossary-item dd {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--color-printer-ink) 70%, transparent);
+  }
+  :is(.dark) .post-content .hh-glossary-item dd {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 70%,
+      transparent
+    );
+  }
+  @media (max-width: 480px) {
+    .post-content .hh-glossary-item {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+
+  /* 自测题：题干是折叠开关，解答默认收起，先自测再看解析 */
+  .post-content .hh-quiz {
+    margin: 0 0 0.75rem;
+    border: 1px solid
+      color-mix(in oklab, var(--color-printer-ink) 12%, transparent);
+    border-radius: 0.375rem;
+    background: var(--color-printer-paper);
+    overflow: hidden;
+  }
+  :is(.dark) .post-content .hh-quiz {
+    border-color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 14%,
+      transparent
+    );
+    background: var(--color-printer-paper-dark);
+  }
+  .post-content .hh-quiz[open] {
+    border-color: color-mix(
+      in oklab,
+      var(--color-printer-accent) 45%,
+      transparent
+    );
+  }
+  :is(.dark) .post-content .hh-quiz[open] {
+    border-color: color-mix(
+      in oklab,
+      var(--color-printer-accent-dark) 45%,
+      transparent
+    );
+  }
+  .post-content .hh-quiz-question {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.75rem 0.9rem;
+    cursor: pointer;
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--color-printer-ink);
+    list-style: none;
+  }
+  :is(.dark) .post-content .hh-quiz-question {
+    color: var(--color-printer-ink-dark);
+  }
+  .post-content .hh-quiz-question::-webkit-details-marker {
+    display: none;
+  }
+  /* 题号前的手动折叠标记：+ / − */
+  .post-content .hh-quiz-question::before {
+    content: "+";
+    flex: none;
+    width: 1.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--color-printer-accent);
+    text-align: center;
+  }
+  :is(.dark) .post-content .hh-quiz-question::before {
+    color: var(--color-printer-accent-dark);
+  }
+  .post-content .hh-quiz[open] .hh-quiz-question::before {
+    content: "−";
+  }
+  .post-content .hh-quiz-question:hover {
+    background: color-mix(
+      in oklab,
+      var(--color-printer-accent) 5%,
+      transparent
+    );
+  }
+  .post-content .hh-quiz-answer {
+    padding: 0 0.9rem 0.9rem 2.6rem;
+    border-top: 1px dotted
+      color-mix(in oklab, var(--color-printer-ink) 12%, transparent);
+  }
+  :is(.dark) .post-content .hh-quiz-answer {
+    border-top-color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 14%,
+      transparent
+    );
+  }
+  .post-content .hh-quiz-answer-label {
+    margin: 0.75rem 0 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-printer-ink-light);
+  }
+  :is(.dark) .post-content .hh-quiz-answer-label {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 45%,
+      transparent
+    );
+  }
+  /* 解答内部的段落/列表沿用题干的字号层级，保持紧凑 */
+  .post-content .hh-quiz-answer p {
+    margin: 0.6rem 0;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: color-mix(in oklab, var(--color-printer-ink) 82%, transparent);
+  }
+  :is(.dark) .post-content .hh-quiz-answer p {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 82%,
+      transparent
+    );
+  }
+  .post-content .hh-quiz-answer ul,
+  .post-content .hh-quiz-answer ol {
+    margin: 0.6rem 0;
+    padding-left: 1.1rem;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    list-style: disc;
+  }
+  .post-content .hh-quiz-answer ol {
+    list-style: decimal;
+  }
+  .post-content .hh-quiz-answer li {
+    margin: 0.25rem 0;
+  }
+  .post-content .hh-quiz-answer .hh-equation {
+    margin: 1rem 0;
+  }
+
+  /* 参考文献：编号 + 条目，长条目悬挂缩进 */
+  .post-content .hh-bibliography {
+    margin: 1.75rem 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+  .post-content .hh-bibliography li {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    color: color-mix(in oklab, var(--color-printer-ink) 72%, transparent);
+    border-bottom: 1px dotted
+      color-mix(in oklab, var(--color-printer-ink) 8%, transparent);
+  }
+  :is(.dark) .post-content .hh-bibliography li {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 72%,
+      transparent
+    );
+    border-bottom-color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 10%,
+      transparent
+    );
+  }
+  .post-content .hh-bib-number {
+    flex: none;
+    min-width: 1.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--color-printer-ink-light);
+  }
+  :is(.dark) .post-content .hh-bib-number {
+    color: color-mix(
+      in oklab,
+      var(--color-printer-ink-dark) 40%,
+      transparent
+    );
+  }
+}
+
+/* 智能体 AI 漫游指南：源文档的「1.1」「1.2.1」等编号已在转换时剔掉，
+   标题编号统一交给站点的 h2/h3 徽标（.post-content h2::before / h3::before）。
+   这里只把徽标下的标题与正文对齐，不再额外缩进。 */
+@layer components {
+  .post-content .hh-guide h2,
+  .post-content .hh-guide h3 {
+    padding-left: 0;
+  }
+}
+
+/* ============================================================
+   正文图片灯箱：点击图片放大查看
+   ============================================================ */
+@layer components {
+  .post-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 内边距只在窄屏生效，宽屏靠图片自身的 max-width 限制 */
+    padding: 1.5rem;
+    animation: post-lightbox-in 180ms var(--ease-swift) both;
+  }
+  /* 背景按钮：涵盖整屏，点击关闭；图片叠在它上面，不触发关闭 */
+  .post-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(20 18 16 / 0.82);
+    backdrop-filter: blur(4px);
+    cursor: zoom-out;
+  }
+  .post-lightbox img {
+    position: relative;
+    z-index: 1;
+    /* 限制在视口内（减去外层 padding），保证小屏也完整可见 */
+    max-width: min(100%, calc(100vw - 3rem));
+    max-height: calc(100dvh - 6rem);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.375rem;
+    box-shadow: 0 24px 60px rgb(0 0 0 / 0.5);
+  }
+  .post-lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    font-size: 1.35rem;
+    line-height: 1;
+    color: #f5f0e8;
+    background: rgb(255 255 255 / 0.12);
+    transition: background 200ms var(--ease-swift);
+  }
+  .post-lightbox-close:hover {
+    background: rgb(255 255 255 / 0.24);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .post-lightbox {
+      animation: none;
+    }
+  }
+}
+
+@keyframes post-lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

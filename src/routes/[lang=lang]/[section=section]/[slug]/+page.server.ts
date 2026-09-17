@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import {
   categoriesOf,
   findPost,
+  nextInSeries,
   posts,
   postTranslations,
   type Post,
@@ -89,10 +90,15 @@ export const load: PageServerLoad = async ({ params }) => {
       })
     : undefined;
 
+  const next = nextInSeries(post);
+
   return {
     section,
     post,
     translations,
+    next: next
+      ? { title: next.title, permalink: next.permalink }
+      : undefined,
     categories,
     wechatQrSvg,
     toc: extractToc(post.content),

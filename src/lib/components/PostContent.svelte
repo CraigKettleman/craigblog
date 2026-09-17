@@ -1,8 +1,12 @@
 <script lang="ts">
+  import { lightbox } from "$lib/lightbox.svelte";
+  import ImageLightbox from "./ImageLightbox.svelte";
+
   let { html }: { html: string } = $props();
 </script>
 
 <div
+  use:lightbox
   class={[
     "post-content prose dark:prose-invert mx-auto max-w-[70ch] font-serif",
     "prose-base sm:prose-lg",
@@ -29,3 +33,6 @@
   <!-- eslint-disable-next-line svelte/no-at-html-tags -- build-time markdown output -->
   {@html html}
 </div>
+
+<!-- 点击插图放大查看（状态在 $lib/lightbox.svelte.ts） -->
+<ImageLightbox />

@@ -9,4 +9,12 @@
 - slug: cs336
   name:
     en: cs336
-    zh: cs336
+    zh: cs336-课程记录
+
+- slug: hitchhiker-agentic-ai
+  name:
+    en: Agentic AI Guide
+    zh: 智能体AI漫游指南
+  description:
+    en: Chinese translation of The Hitchhiker's Guide to Agentic AI, one article per chapter
+    zh: 《The Hitchhiker's Guide to Agentic AI》中译本，按章节拆分为 31 篇

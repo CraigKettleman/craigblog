@@ -110,30 +110,6 @@ const site = defineCollection({
   }),
 });
 
-/**
- * 为每张正文图片按 src 哈希注入确定性微倾斜（-1° ~ +1°），
- * 由 .post-content img 的 CSS 读取 --img-tilt 应用（参考 cali.so 的图片倾斜排版）。
- */
-function rehypeImageTilt(): (tree: unknown) => void {
-  const visit = (node: unknown) => {
-    const n = node as {
-      type?: string;
-      tagName?: string;
-      properties?: Record<string, unknown>;
-      children?: unknown[];
-    };
-    if (n.type === "element" && n.tagName === "img") {
-      const src = String(n.properties?.src ?? "");
-      let hash = 0;
-      for (const ch of src) hash = (hash * 31 + ch.charCodeAt(0)) | 0;
-      const tilt = ((Math.abs(hash) % 5) - 2) * 0.5; // -1 | -0.5 | 0 | 0.5 | 1
-      n.properties = { ...n.properties, style: `--img-tilt:${tilt}deg` };
-    }
-    if (Array.isArray(n.children)) n.children.forEach(visit);
-  };
-  return (tree) => visit(tree);
-}
-
 const posts = defineCollection({
   name: "Post",
   pattern: ["posts/**/*.md", "projects/**/*.md"],
@@ -187,7 +163,7 @@ export default defineConfig({
   },
   collections: { site, categories, posts },
   markdown: {
-    rehypePlugins: [rehypeSlug, rehypePrettyCode, rehypeImageTilt],
+    rehypePlugins: [rehypeSlug, rehypePrettyCode],
   },
   prepare: ({ categories, posts }) => {
     const unknownCategories = posts

@@ -405,13 +405,32 @@
     </a>
   </div>
 
-  <div class="mt-6">
+  <!-- 系列导航：左「返回分享」，右「下一篇」（仅漫游指南这批文章有下一篇） -->
+  <div class="mt-6 flex items-start justify-between gap-4">
     <a
       href={dictionary.urls[data.section]}
       class="inline-flex items-center gap-1 font-mono text-[11px] tracking-wider text-printer-accent dark:text-printer-accent-dark hover:underline"
     >
       {dictionary.labels.backToSection[data.section]}
     </a>
+
+    {#if data.next}
+      <a
+        href={data.next.permalink}
+        class="group inline-flex max-w-[60%] flex-col items-end gap-1 text-right"
+      >
+        <span
+          class="font-mono text-[10px] uppercase tracking-wider text-printer-ink-light dark:text-printer-ink-dark/40"
+        >
+          {lang === "zh" ? "下一篇" : "Next"} →
+        </span>
+        <span
+          class="font-serif text-[13px] leading-snug text-printer-ink dark:text-printer-ink-dark group-hover:text-printer-accent dark:group-hover:text-printer-accent-dark transition-colors"
+        >
+          {data.next.title}
+        </span>
+      </a>
+    {/if}
   </div>
 
   <Comments {lang} thread={post.permalink} />

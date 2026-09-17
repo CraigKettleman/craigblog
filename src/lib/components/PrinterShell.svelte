@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { afterNavigate, goto } from "$app/navigation";
+  import { afterNavigate, beforeNavigate, goto } from "$app/navigation";
   import { page } from "$app/state";
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
@@ -148,42 +148,125 @@
   }
 
   // ------------------------------------------------------------------
-  // Paper feed animation on navigation, with a subtle paper-jam stutter.
+  // 走纸动画：打开页面时整张纸从出纸口滑出（不是滑一小段），切换页面时
+  // 先反向把旧页吸回打印机，再让新页滑出。单程固定 0.5s，走纸速度 = 纸长 / 0.5s
+  // （纸越长走得越快），匀速走完。
+  // 纸张「藏在出纸口内侧」的状态由 app.html 预置的 .paper-preload 承担，
+  // 动画与它同帧交接，首屏不会先闪出一帧完整页面。
   // ------------------------------------------------------------------
-  const FEED_PX = 120; // how many pixels the paper slides down — double the
-  // original travel so the feed reads as a longer haul at the same pace.
+  const FEED_MS = 500;
+  const PAPER_PRELOAD_CLASS = "paper-preload";
 
   let paperElement: HTMLDivElement;
+  let sheetAnimation: Animation | undefined;
+  // 走纸流程接管了一次导航后置为 true：它重发的那次导航要放行，不能再拦一次
+  let retracting = false;
 
-  function generatePaperFeedKeyframes(): { offset: number; transform: string }[] {
-    const keyframes = [{ offset: 0, transform: `translateY(-${FEED_PX}px)` }];
-
-    const stutterCount = 2 + Math.floor(Math.random() * 2);
-    const offsets = Array.from(
-      { length: stutterCount },
-      () => 0.15 + Math.random() * 0.6,
-    ).sort((a, b) => a - b);
-
-    for (const offset of offsets) {
-      const linearPx = FEED_PX * (1 - offset); // remaining distance
-      const jitter = (Math.random() - 0.4) * 8; // small random deviation
-      const y = -Math.max(0, Math.min(FEED_PX, linearPx + jitter));
-      keyframes.push({ offset, transform: `translateY(${y}px)` });
-    }
-
-    keyframes.push({ offset: 1, transform: "translateY(0px)" });
-    return keyframes;
+  function setPaperHidden(hidden: boolean) {
+    document.documentElement.classList.toggle(PAPER_PRELOAD_CLASS, hidden);
   }
+
+  function prefersReducedMotion(): boolean {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  /** 纸张当前的纵向偏移，换算成纸高的百分比（正在跑的动画也算进去） */
+  function paperOffsetPct(el: HTMLElement): number {
+    const transform = getComputedStyle(el).transform;
+    if (!transform || transform === "none" || !el.offsetHeight) return 0;
+    return (new DOMMatrixReadOnly(transform).f / el.offsetHeight) * 100;
+  }
+
+  /**
+   * 跑一段走纸。返回 false 表示中途被新的一段走纸取消，收尾交给那一段。
+   * keepHidden 为真（吸入结束）时交回预置隐藏状态，纸张继续留在出纸口内侧。
+   */
+  async function runSheetFeed(
+    startPct: number,
+    endPct: number,
+    keepHidden: boolean,
+  ): Promise<boolean> {
+    sheetAnimation?.cancel(); // 上一段没跑完就让位，由这一段接着当前位置走
+    paperElement.style.willChange = "transform";
+    const animation = paperElement.animate(
+      [
+        { transform: `translateY(${startPct}%)` },
+        { transform: `translateY(${endPct}%)` },
+      ],
+      { duration: FEED_MS, easing: "linear", fill: "both" },
+    );
+    sheetAnimation = animation;
+    try {
+      await animation.finished;
+    } catch {
+      // 被新的一段走纸取消（见上方说明），收尾交给它
+      return false;
+    }
+    if (keepHidden) setPaperHidden(true);
+    animation.cancel(); // 撤掉 fill：transform 常驻会让纸内的 fixed 元素改换定位基准
+    paperElement.style.willChange = "";
+    sheetAnimation = undefined;
+    return true;
+  }
+
+  /** 滑出：从当前位置把纸完整吐出来，页脚撕边最后离开出纸口 */
+  function feedOutPaper(): Promise<boolean> {
+    // 偏移要在撤掉预置隐藏之前读：类一撤 transform 就变回 none
+    const startPct = paperOffsetPct(paperElement);
+    setPaperHidden(false); // 起始帧已经盖住纸面，预置隐藏可以撤了
+    return runSheetFeed(startPct, 0, false);
+  }
+
+  /** 吸入：反向走纸，把纸整张收回打印机 */
+  function retractPaper(): Promise<boolean> {
+    // 从当前位置出发，所以上一段没跑完也能接上
+    return runSheetFeed(paperOffsetPct(paperElement), -100, true);
+  }
+
+  /** 吸入旧页，然后重发这次导航，由 afterNavigate 接着把新页滑出来 */
+  async function retractThenNavigate(target: URL) {
+    retracting = true;
+    try {
+      // 中途被打断说明有别的链接接管了导航，这次就不重发了
+      if (!(await retractPaper())) return;
+      await goto(target.href);
+    } catch (error) {
+      // 导航没能完成时把纸放回来，否则整页会一直藏在出纸口后面
+      setPaperHidden(false);
+      console.error("页面切换失败，已恢复纸张显示", error);
+    } finally {
+      retracting = false;
+    }
+  }
+
+  beforeNavigate((navigation) => {
+    if (retracting || !navigation.to || navigation.willUnload) return;
+    if (navigation.type !== "link" && navigation.type !== "goto") return;
+    if (!paperElement || prefersReducedMotion()) return;
+
+    // 同一条路由只换 query/hash（后台筛选、页内锚点）不动画，保持即时响应
+    const target = navigation.to.url;
+    if (target.pathname === page.url.pathname) return;
+
+    navigation.cancel();
+    void retractThenNavigate(target);
+  });
 
   afterNavigate((navigation) => {
     pendingNavHref = null;
-    if (navigation.type === "enter" || !paperElement) return;
-
-    paperElement.animate(generatePaperFeedKeyframes(), {
-      duration: 700 + Math.random() * 400, // longer haul, kept at the original pace
-      easing: "linear",
-      fill: "backwards",
-    });
+    // 这些情况不走纸：前进/后退（保留浏览器原生的即时切换与滚动位置恢复）、
+    // 纸张还完整露在外面（说明这次导航没经过吸入，例如点了当前页的链接，
+    // 再走一次滑出只会让纸凭空弹回出纸口里）
+    if (
+      navigation.type === "popstate" ||
+      !paperElement ||
+      prefersReducedMotion() ||
+      paperOffsetPct(paperElement) > -0.5
+    ) {
+      setPaperHidden(false);
+      return;
+    }
+    void feedOutPaper();
   });
 
   // Keep the indicator light's pulse in sync with wall-clock time so it
@@ -205,13 +288,15 @@
 
 <div class="min-h-screen page-grid flex flex-col items-center px-3 py-6 sm:py-10">
   <!-- Printer Body -->
-  <div class="w-full max-w-4xl relative">
+  <div class="printer-stack w-full max-w-4xl relative">
     <!-- Snail crawling along the very top edge of the printer shell -->
     <PrinterSnail />
 
-    <!-- Unified header housing — wraps both brand and slit areas to share a single shadow -->
+    <!-- Header housing — brand plate & nav only. The paper slit is a separate sticky
+         element below (see .printer-slit-bar), so the shell can scroll out of view
+         while the slit stays pinned to the top of the viewport. -->
     <div
-      class="printer-header-border dark:border dark:border-white/[0.06] rounded-t-[2.5rem] rounded-b-sm overflow-hidden relative z-10"
+      class="printer-header-border dark:border dark:border-white/[0.06] border-b-0 dark:border-b-0 rounded-t-[2.5rem] overflow-hidden relative z-10"
     >
       <!-- Dark mode ambient glow — soft top light spill -->
       <div
@@ -353,26 +438,55 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Bottom part - Paper feed slot cross section -->
+    <!-- Paper feed slit — a sticky element of its own: it travels up with the shell until
+         it reaches the top of the viewport, then stays pinned there while the shell scrolls
+         out of view and the paper slides up behind it, as if the printer were pulling the
+         page back in. It carries the shell band above the slit plus the slit's top edge, and
+         nothing else: the paper comes out of the slit and lies over the slit's lower part,
+         so the rest of the slit and the lip below it are painted under the paper
+         (see .printer-slit-lip). z-30 keeps this strip above the paper (z-20). -->
+    <div
+      class="printer-slit-bar bg-printer-shell dark:bg-printer-shell-dark h-2 flex items-center justify-center z-30 dark:border dark:border-white/[0.06] border-t-0 dark:border-t-0 border-b-0 dark:border-b-0"
+    >
+      <!-- Inset shadows to give depth to the slit area -->
       <div
-        class="bg-printer-shell dark:bg-printer-shell-dark h-5 flex items-center justify-center relative"
-      >
-        <!-- Inset shadows to give depth to the slit area -->
-        <div
-          class="absolute inset-0 shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[inset_0_3px_6px_rgba(0,0,0,0.5)] pointer-events-none"
-        ></div>
-        <div
-          class="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/[0.05] to-transparent dark:from-black/[0.2]"
-        ></div>
-        <div
-          class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/[0.05] to-transparent dark:from-black/[0.2]"
-        ></div>
-        <!-- Paper exit slit -->
-        <div
-          class="absolute left-2 right-2 sm:left-8 sm:right-8 h-[6px] bg-black/60 dark:bg-black/90 rounded-[1px] shadow-[inset_0_1px_3px_rgba(0,0,0,0.8)] dark:shadow-[inset_0_1px_4px_rgba(0,0,0,0.9)]"
-        ></div>
-      </div>
+        class="absolute inset-0 shadow-[inset_0_2px_4px_rgba(0,0,0,0.08)] dark:shadow-[inset_0_3px_6px_rgba(0,0,0,0.5)] pointer-events-none"
+      ></div>
+      <div
+        class="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/[0.05] to-transparent dark:from-black/[0.2]"
+      ></div>
+      <div
+        class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/[0.05] to-transparent dark:from-black/[0.2]"
+      ></div>
+      <!-- Upper edge of the paper slit — the paper covers the rest of the slit below this line -->
+      <div
+        class="absolute bottom-0 left-2 right-2 sm:left-8 sm:right-8 h-px bg-black/60 dark:bg-black/90 rounded-t-[1px] shadow-[inset_0_1px_3px_rgba(0,0,0,0.8)] dark:shadow-[inset_0_1px_4px_rgba(0,0,0,0.9)]"
+      ></div>
+      <!-- Printer head blocking light — rides with the slit, the paper slides behind it -->
+      <div class="paper-top-occlusion" aria-hidden="true"></div>
+    </div>
+
+    <!-- Lower part of the paper slit + the shell lip below it: the paper leaves the slit and
+         lies over both, so this strip must sit underneath the paper (no z-index here — the
+         paper is z-20) while still pinning itself to the slit (it follows the bar in flow,
+         so its sticky threshold is simply the bar's height). Its top edge continues the
+         slit's upper edge, so the slit reads as one 6px line wherever the paper doesn't
+         cover it. -->
+    <div
+      class="printer-slit-lip bg-printer-shell dark:bg-printer-shell-dark h-3 rounded-b-sm dark:border dark:border-white/[0.06] border-t-0 dark:border-t-0"
+    >
+      <div
+        class="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/[0.05] to-transparent dark:from-black/[0.2]"
+      ></div>
+      <div
+        class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/[0.05] to-transparent dark:from-black/[0.2]"
+      ></div>
+      <!-- Lower part of the paper slit, hidden behind the paper in the middle -->
+      <div
+        class="absolute top-0 left-2 right-2 sm:left-8 sm:right-8 h-[5px] bg-black/60 dark:bg-black/90 rounded-b-[1px] shadow-[inset_0_1px_3px_rgba(0,0,0,0.8)] dark:shadow-[inset_0_1px_4px_rgba(0,0,0,0.9)]"
+      ></div>
     </div>
 
     <!-- Cast shadow outside the printer shell bottom edge -->
@@ -385,8 +499,7 @@
       class="printer-paper-wrap relative mx-3 sm:mx-10 -mt-[12px] z-20"
       style:clip-path="inset(0 -20px -56px -20px)"
     >
-      <div class="paper-top-occlusion" aria-hidden="true"></div>
-      <div bind:this={paperElement}>
+      <div class="printer-paper-sheet" bind:this={paperElement}>
         <div
           class="printer-paper-area bg-printer-paper dark:bg-printer-paper-dark dark:border dark:border-white/[0.04] thermal-texture min-h-[60vh] shadow-[0_4px_12px_rgba(0,0,0,0.15),0_1px_2px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4),0_1px_3px_rgba(0,0,0,0.3)] relative z-0 flex flex-col overflow-hidden"
         >
