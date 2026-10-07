@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 21 章 Agent 环境与基准"
+title: "第 21 章 Agent 环境与基准"
 slug: "hitchhiker-agentic-ai-21-agentic-environments-and-benchmarks"
 lang: "zh"
 date: "2026-09-16T00:22:00.000Z"
@@ -549,7 +549,7 @@ Long-Horizon-Terminal-Bench [386] 覆盖 21 个领域中的 46 个复杂任务�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 22 章 模型上下文协议（Model Context Protocol, MCP）</p>
+<p class="hh-next-title">第 22 章 模型上下文协议（Model Context Protocol, MCP）</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

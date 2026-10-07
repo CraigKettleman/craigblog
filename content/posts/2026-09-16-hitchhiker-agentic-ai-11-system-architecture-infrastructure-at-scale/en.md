@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 11 System Architecture & Infrastructure at Scale"
+title: "Chapter 11 System Architecture & Infrastructure at Scale"
 slug: "hitchhiker-agentic-ai-11-system-architecture-infrastructure-at-scale"
 lang: "en"
 date: "2026-09-16T00:12:00.000Z"
@@ -501,7 +501,7 @@ Miles [295] is PyTorch’s official stack for large-scale LLM RL, connecting SG
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 12 LLM Agentic Training</p>
+<p class="hh-next-title">Chapter 12 LLM Agentic Training</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 3 章 强化学习导论"
+title: "第 3 章 强化学习导论"
 slug: "hitchhiker-agentic-ai-03-introduction-to-reinforcement-learning"
 lang: "zh"
 date: "2026-09-16T00:04:00.000Z"
@@ -270,7 +270,7 @@ On-PolicyOff-Policy数据来源仅当前策略 <math alttext="\pi_{\theta}" disp
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 4 章 大语言模型的强化学习基础</p>
+<p class="hh-next-title">第 4 章 大语言模型的强化学习基础</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

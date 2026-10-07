@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 15 章 智能体 AI 简介"
+title: "第 15 章 智能体 AI 简介"
 slug: "hitchhiker-agentic-ai-15-introduction-to-agentic-ai"
 lang: "zh"
 date: "2026-09-16T00:16:00.000Z"
@@ -47,7 +47,7 @@ keywords:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 16 章 检索增强生成（RAG）</p>
+<p class="hh-next-title">第 16 章 检索增强生成（RAG）</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

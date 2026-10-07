@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 13 RL for Large Reasoning Models"
+title: "Chapter 13 RL for Large Reasoning Models"
 slug: "hitchhiker-agentic-ai-13-rl-for-large-reasoning-models"
 lang: "en"
 date: "2026-09-16T00:14:00.000Z"
@@ -607,7 +607,7 @@ The development of reasoning models represents a paradigm shift: from language m
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 14 LLM Evaluation</p>
+<p class="hh-next-title">Chapter 14 LLM Evaluation</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

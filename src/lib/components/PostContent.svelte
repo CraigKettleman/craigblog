@@ -8,7 +8,7 @@
 <div
   use:lightbox
   class={[
-    "post-content prose dark:prose-invert mx-auto max-w-[70ch] font-serif",
+    "post-content prose dark:prose-invert max-w-none font-serif",
     "prose-base sm:prose-lg",
     "prose-headings:font-serif prose-headings:text-printer-ink dark:prose-headings:text-printer-ink-dark",
     "prose-headings:tracking-tight prose-headings:scroll-mt-24",

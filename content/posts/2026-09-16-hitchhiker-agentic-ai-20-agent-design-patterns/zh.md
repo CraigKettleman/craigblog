@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 20 章 Agent 设计模式"
+title: "第 20 章 Agent 设计模式"
 slug: "hitchhiker-agentic-ai-20-agent-design-patterns"
 lang: "zh"
 date: "2026-09-16T00:21:00.000Z"
@@ -123,7 +123,7 @@ Agent 调用工具的方式会显著影响其可靠性、延迟和成本。已�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 21 章 Agent 环境与基准</p>
+<p class="hh-next-title">第 21 章 Agent 环境与基准</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

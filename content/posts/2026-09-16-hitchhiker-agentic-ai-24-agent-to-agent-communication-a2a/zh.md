@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 24 章 智能体到智能体通信（Agent-to-Agent, A2A）"
+title: "第 24 章 智能体到智能体通信（Agent-to-Agent, A2A）"
 slug: "hitchhiker-agentic-ai-24-agent-to-agent-communication-a2a"
 lang: "zh"
 date: "2026-09-16T00:25:00.000Z"
@@ -833,7 +833,7 @@ if __name__ == "__main__":
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 25 章 多智能体系统（Multi-Agent Systems）</p>
+<p class="hh-next-title">第 25 章 多智能体系统（Multi-Agent Systems）</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

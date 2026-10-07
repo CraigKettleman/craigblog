@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 30 章 总结与未来方向"
+title: "第 30 章 总结与未来方向"
 slug: "hitchhiker-agentic-ai-30-conclusion-and-future-directions"
 lang: "zh"
 date: "2026-09-16T00:31:00.000Z"

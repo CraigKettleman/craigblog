@@ -41,9 +41,17 @@ export function isSection(value: string): value is Section {
   return (sections as readonly string[]).includes(value);
 }
 
-/** All published posts, newest first. Drafts are only visible in dev. */
+/**
+ * 草稿只在 dev 构建里可见。
+ * 用构建模式 MODE 而非 import.meta.env.DEV 判断：Vite 的 DEV 取自进程环境变量
+ * NODE_ENV，构建时该变量若被外部置成 development，生产构建会把草稿当成已发布
+ * 内容一起 prerender 出去（草稿页面与 sitemap 都会带上）。MODE 只跟 --mode 走。
+ */
+const includeDrafts = import.meta.env.MODE !== "production";
+
+/** All published posts, newest first. */
 export const posts: Post[] = (allPosts as unknown as Post[])
-  .filter((post) => import.meta.env.DEV || !post.draft)
+  .filter((post) => includeDrafts || !post.draft)
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
 export const categories: Category[] = allCategories as unknown as Category[];

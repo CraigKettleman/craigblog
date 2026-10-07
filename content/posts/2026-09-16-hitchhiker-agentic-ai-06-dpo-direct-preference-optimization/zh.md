@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 6 章 DPO——直接偏好优化"
+title: "第 6 章 DPO——直接偏好优化"
 slug: "hitchhiker-agentic-ai-06-dpo-direct-preference-optimization"
 lang: "zh"
 date: "2026-09-16T00:07:00.000Z"
@@ -294,7 +294,7 @@ loss 定义为：
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 7 章 GRPO ——组相对策略优化</p>
+<p class="hh-next-title">第 7 章 GRPO ——组相对策略优化</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

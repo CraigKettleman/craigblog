@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 22 Model Context Protocol (MCP)"
+title: "Chapter 22 Model Context Protocol (MCP)"
 slug: "hitchhiker-agentic-ai-22-model-context-protocol-mcp"
 lang: "en"
 date: "2026-09-16T00:23:00.000Z"
@@ -805,7 +805,7 @@ For practitioners building RL-trained agents, MCP offers a particularly compelli
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 23 Agent Skills</p>
+<p class="hh-next-title">Chapter 23 Agent Skills</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

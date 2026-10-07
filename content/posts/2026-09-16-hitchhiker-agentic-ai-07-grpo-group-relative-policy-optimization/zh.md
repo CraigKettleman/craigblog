@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 7 章 GRPO ——组相对策略优化"
+title: "第 7 章 GRPO ——组相对策略优化"
 slug: "hitchhiker-agentic-ai-07-grpo-group-relative-policy-optimization"
 lang: "zh"
 date: "2026-09-16T00:08:00.000Z"
@@ -290,7 +290,7 @@ GOPO [54] 始于一个简单观察：奖励模型是用成对比较（“A 是�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 8 章 偏好优化变体</p>
+<p class="hh-next-title">第 8 章 偏好优化变体</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

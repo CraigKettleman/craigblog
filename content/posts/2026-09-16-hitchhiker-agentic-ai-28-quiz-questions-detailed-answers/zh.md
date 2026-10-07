@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 28 章 测验题与详细解答"
+title: "第 28 章 测验题与详细解答"
 slug: "hitchhiker-agentic-ai-28-quiz-questions-detailed-answers"
 lang: "zh"
 date: "2026-09-16T00:29:00.000Z"
@@ -954,7 +954,7 @@ keywords:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 29 章 速查手册</p>
+<p class="hh-next-title">第 29 章 速查手册</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 14 章 LLM 评估"
+title: "第 14 章 LLM 评估"
 slug: "hitchhiker-agentic-ai-14-llm-evaluation"
 lang: "zh"
 date: "2026-09-16T00:15:00.000Z"
@@ -420,7 +420,7 @@ G-Eval [232] 是一个基于 LLM 的结构化评估框架，它使用思维链 P
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 15 章 智能体 AI 简介</p>
+<p class="hh-next-title">第 15 章 智能体 AI 简介</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 17 章 智能体记忆系统"
+title: "第 17 章 智能体记忆系统"
 slug: "hitchhiker-agentic-ai-17-agentic-memory-systems"
 lang: "zh"
 date: "2026-09-16T00:18:00.000Z"
@@ -915,7 +915,7 @@ A-MEM [400] 提出了一种记忆系统，它借鉴<em>卡片盒笔记法（Zett
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 18 章 Agent Harness ——上下文管理与编排</p>
+<p class="hh-next-title">第 18 章 Agent Harness ——上下文管理与编排</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

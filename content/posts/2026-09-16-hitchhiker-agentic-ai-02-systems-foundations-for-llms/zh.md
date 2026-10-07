@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 2 章 面向 LLM 的系统基础"
+title: "第 2 章 面向 LLM 的系统基础"
 slug: "hitchhiker-agentic-ai-02-systems-foundations-for-llms"
 lang: "zh"
 date: "2026-09-16T00:03:00.000Z"
@@ -224,7 +224,7 @@ Dynamo [270] 是 NVIDIA 的开源编排层，位于各个推理引擎（SGLang�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 3 章 强化学习导论</p>
+<p class="hh-next-title">第 3 章 强化学习导论</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

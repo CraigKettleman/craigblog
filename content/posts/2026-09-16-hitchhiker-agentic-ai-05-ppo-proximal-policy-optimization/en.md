@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 5 PPO — Proximal Policy Optimization"
+title: "Chapter 5 PPO — Proximal Policy Optimization"
 slug: "hitchhiker-agentic-ai-05-ppo-proximal-policy-optimization"
 lang: "en"
 date: "2026-09-16T00:06:00.000Z"
@@ -263,7 +263,7 @@ ParameterTypicalEffect of Getting It Wrong<code>cliprange</code>0.2Too low: no l
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 6 DPO — Direct Preference Optimization</p>
+<p class="hh-next-title">Chapter 6 DPO — Direct Preference Optimization</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

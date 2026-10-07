@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 9 章 奖励模型训练"
+title: "第 9 章 奖励模型训练"
 slug: "hitchhiker-agentic-ai-09-reward-model-training"
 lang: "zh"
 date: "2026-09-16T00:10:00.000Z"
@@ -89,7 +89,7 @@ Plackett-Luce（PL）模型 [291] 是 Bradley-Terry 模型向完整排序的标�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 10 章 SFT 最佳实践与技巧</p>
+<p class="hh-next-title">第 10 章 SFT 最佳实践与技巧</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

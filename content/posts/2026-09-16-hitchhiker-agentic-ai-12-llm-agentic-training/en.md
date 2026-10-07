@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 12 LLM Agentic Training"
+title: "Chapter 12 LLM Agentic Training"
 slug: "hitchhiker-agentic-ai-12-llm-agentic-training"
 lang: "en"
 date: "2026-09-16T00:13:00.000Z"
@@ -385,7 +385,7 @@ xAI’s Grok 4.5 (July 2026) [389] introduced a novel data source: anonymized 
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 13 RL for Large Reasoning Models</p>
+<p class="hh-next-title">Chapter 13 RL for Large Reasoning Models</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

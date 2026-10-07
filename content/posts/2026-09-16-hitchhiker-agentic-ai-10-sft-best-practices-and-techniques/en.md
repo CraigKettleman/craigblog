@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 10 SFT Best Practices and Techniques"
+title: "Chapter 10 SFT Best Practices and Techniques"
 slug: "hitchhiker-agentic-ai-10-sft-best-practices-and-techniques"
 lang: "en"
 date: "2026-09-16T00:11:00.000Z"
@@ -129,7 +129,7 @@ For Alignment Tax:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 11 System Architecture & Infrastructure at Scale</p>
+<p class="hh-next-title">Chapter 11 System Architecture & Infrastructure at Scale</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

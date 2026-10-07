@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { PostListItem } from "$lib/content";
   import { displayDate } from "$lib/date";
-  import DitherImage from "$lib/components/DitherImage.svelte";
 
   let {
     posts,
@@ -38,8 +37,13 @@
               <div class="post-thumb-sheet post-thumb-sheet-back"></div>
               <div class="post-thumb-sheet post-thumb-sheet-front"></div>
               {#if post.cover}
-                <!-- 源站同款：canvas 拜耳抖动像素画，hover 显影成真图 -->
-                <DitherImage src={post.cover.src} />
+                <!-- 列表缩略图直接显示封面原图，不加抖动遮盖（遮盖效果只保留在文章内） -->
+                <img
+                  src={post.cover.src}
+                  alt=""
+                  loading="lazy"
+                  class="post-thumb-layer"
+                />
               {:else}
                 <div class="post-thumb-blank"></div>
               {/if}

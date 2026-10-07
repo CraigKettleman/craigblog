@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 5 章 PPO——近端策略优化"
+title: "第 5 章 PPO——近端策略优化"
 slug: "hitchhiker-agentic-ai-05-ppo-proximal-policy-optimization"
 lang: "zh"
 date: "2026-09-16T00:06:00.000Z"
@@ -263,7 +263,7 @@ for batch in ppo_trainer.dataloader:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 6 章 DPO——直接偏好优化</p>
+<p class="hh-next-title">第 6 章 DPO——直接偏好优化</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

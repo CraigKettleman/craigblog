@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 23 章 Agent Skills"
+title: "第 23 章 Agent Skills"
 slug: "hitchhiker-agentic-ai-23-agent-skills"
 lang: "zh"
 date: "2026-09-16T00:24:00.000Z"
@@ -124,7 +124,7 @@ Anthropic 总结了五种可组合的 workflow 模式，可作为 skill 模板�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 24 章 智能体到智能体通信（Agent-to-Agent, A2A）</p>
+<p class="hh-next-title">第 24 章 智能体到智能体通信（Agent-to-Agent, A2A）</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

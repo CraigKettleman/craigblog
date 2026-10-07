@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 18 Agent Harness – Context Management and…"
+title: "Chapter 18 Agent Harness – Context Management and…"
 slug: "hitchhiker-agentic-ai-18-agent-harness-context-management-and-orchestrati"
 lang: "en"
 date: "2026-09-16T00:19:00.000Z"
@@ -831,7 +831,7 @@ The agent harness is the engineering foundation that transforms a language model
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 19 Loop Engineering</p>
+<p class="hh-next-title">Chapter 19 Loop Engineering</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

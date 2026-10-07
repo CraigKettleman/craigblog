@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 13 章 面向大型推理模型的强化学习"
+title: "第 13 章 面向大型推理模型的强化学习"
 slug: "hitchhiker-agentic-ai-13-rl-for-large-reasoning-models"
 lang: "zh"
 date: "2026-09-16T00:14:00.000Z"
@@ -607,7 +607,7 @@ OPSD 在后训练流水线中占据一个特定的生态位：
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 14 章 LLM 评估</p>
+<p class="hh-next-title">第 14 章 LLM 评估</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 3 Introduction to Reinforcement Learning"
+title: "Chapter 3 Introduction to Reinforcement Learning"
 slug: "hitchhiker-agentic-ai-03-introduction-to-reinforcement-learning"
 lang: "en"
 date: "2026-09-16T00:04:00.000Z"
@@ -270,7 +270,7 @@ The complete PBRS reward:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 4 RL Foundations for Language Models</p>
+<p class="hh-next-title">Chapter 4 RL Foundations for Language Models</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

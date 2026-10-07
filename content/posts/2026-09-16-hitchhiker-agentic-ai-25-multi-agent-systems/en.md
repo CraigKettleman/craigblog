@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 25 Multi-Agent Systems"
+title: "Chapter 25 Multi-Agent Systems"
 slug: "hitchhiker-agentic-ai-25-multi-agent-systems"
 lang: "en"
 date: "2026-09-16T00:26:00.000Z"
@@ -661,7 +661,7 @@ The field of multi-agent LLM systems is evolving rapidly. The patterns and techn
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 26 Agent Development Frameworks</p>
+<p class="hh-next-title">Chapter 26 Agent Development Frameworks</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

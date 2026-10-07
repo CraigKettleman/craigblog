@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 12 章 LLM 智能体训练"
+title: "第 12 章 LLM 智能体训练"
 slug: "hitchhiker-agentic-ai-12-llm-agentic-training"
 lang: "zh"
 date: "2026-09-16T00:13:00.000Z"
@@ -385,7 +385,7 @@ xAI 的 Grok 4.5（2026 年 7 月）[389] 引入了一种新的数据来源：�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 13 章 面向大型推理模型的强化学习</p>
+<p class="hh-next-title">第 13 章 面向大型推理模型的强化学习</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -21,17 +21,6 @@
               window.matchMedia("(prefers-color-scheme: dark)").matches);
           document.documentElement.classList.toggle("dark", dark);
         } catch (e) {}
-        try {
-          // 走纸起点：首屏 HTML 里纸张是完整可见的，这里在第一帧之前先把它
-          // 挪到出纸口内侧，等 PrinterShell 启动后播放走纸动画；禁用 JS 或
-          // 偏好减少动效时不加这个类；脚本异常时靠兜底定时器把纸放回来。
-          if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            document.documentElement.classList.add("paper-preload");
-            setTimeout(function () {
-              document.documentElement.classList.remove("paper-preload");
-            }, 10000);
-          }
-        } catch (e) {}
       })();
     </script>
     %sveltekit.head%

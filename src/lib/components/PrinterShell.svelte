@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { afterNavigate, beforeNavigate, goto } from "$app/navigation";
+  import { afterNavigate, goto } from "$app/navigation";
   import { page } from "$app/state";
   import { onMount } from "svelte";
   import type { Snippet } from "svelte";
@@ -148,125 +148,48 @@
   }
 
   // ------------------------------------------------------------------
-  // 走纸动画：打开页面时整张纸从出纸口滑出（不是滑一小段），切换页面时
-  // 先反向把旧页吸回打印机，再让新页滑出。单程固定 0.5s，走纸速度 = 纸长 / 0.5s
-  // （纸越长走得越快），匀速走完。
-  // 纸张「藏在出纸口内侧」的状态由 app.html 预置的 .paper-preload 承担，
-  // 动画与它同帧交接，首屏不会先闪出一帧完整页面。
+  // 走纸动画：切换页面时纸张向下滑一小段，带上卡纸般的顿挫感。
+  // 幻灯片本身不动，只做固定行程的小位移，不做整张纸的出纸与回收。
+  // 行程翻倍即速度翻倍：时长不变、匀速播放，位移加倍后走纸更快。
   // ------------------------------------------------------------------
-  const FEED_MS = 500;
-  const PAPER_PRELOAD_CLASS = "paper-preload";
+  const FEED_PX = 240; // 纸张下滑的像素数（原 120px，加倍的行程与走纸速度）
 
   let paperElement: HTMLDivElement;
-  let sheetAnimation: Animation | undefined;
-  // 走纸流程接管了一次导航后置为 true：它重发的那次导航要放行，不能再拦一次
-  let retracting = false;
-
-  function setPaperHidden(hidden: boolean) {
-    document.documentElement.classList.toggle(PAPER_PRELOAD_CLASS, hidden);
-  }
 
   function prefersReducedMotion(): boolean {
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
-  /** 纸张当前的纵向偏移，换算成纸高的百分比（正在跑的动画也算进去） */
-  function paperOffsetPct(el: HTMLElement): number {
-    const transform = getComputedStyle(el).transform;
-    if (!transform || transform === "none" || !el.offsetHeight) return 0;
-    return (new DOMMatrixReadOnly(transform).f / el.offsetHeight) * 100;
-  }
+  function generatePaperFeedKeyframes(): { offset: number; transform: string }[] {
+    const keyframes = [{ offset: 0, transform: `translateY(-${FEED_PX}px)` }];
 
-  /**
-   * 跑一段走纸。返回 false 表示中途被新的一段走纸取消，收尾交给那一段。
-   * keepHidden 为真（吸入结束）时交回预置隐藏状态，纸张继续留在出纸口内侧。
-   */
-  async function runSheetFeed(
-    startPct: number,
-    endPct: number,
-    keepHidden: boolean,
-  ): Promise<boolean> {
-    sheetAnimation?.cancel(); // 上一段没跑完就让位，由这一段接着当前位置走
-    paperElement.style.willChange = "transform";
-    const animation = paperElement.animate(
-      [
-        { transform: `translateY(${startPct}%)` },
-        { transform: `translateY(${endPct}%)` },
-      ],
-      { duration: FEED_MS, easing: "linear", fill: "both" },
-    );
-    sheetAnimation = animation;
-    try {
-      await animation.finished;
-    } catch {
-      // 被新的一段走纸取消（见上方说明），收尾交给它
-      return false;
+    const stutterCount = 2 + Math.floor(Math.random() * 2);
+    const offsets = Array.from(
+      { length: stutterCount },
+      () => 0.15 + Math.random() * 0.6,
+    ).sort((a, b) => a - b);
+
+    for (const offset of offsets) {
+      const linearPx = FEED_PX * (1 - offset); // remaining distance
+      const jitter = (Math.random() - 0.4) * (FEED_PX / 15); // 抖动量随行程等比放大
+      const y = -Math.max(0, Math.min(FEED_PX, linearPx + jitter));
+      keyframes.push({ offset, transform: `translateY(${y}px)` });
     }
-    if (keepHidden) setPaperHidden(true);
-    animation.cancel(); // 撤掉 fill：transform 常驻会让纸内的 fixed 元素改换定位基准
-    paperElement.style.willChange = "";
-    sheetAnimation = undefined;
-    return true;
+
+    keyframes.push({ offset: 1, transform: "translateY(0px)" });
+    return keyframes;
   }
-
-  /** 滑出：从当前位置把纸完整吐出来，页脚撕边最后离开出纸口 */
-  function feedOutPaper(): Promise<boolean> {
-    // 偏移要在撤掉预置隐藏之前读：类一撤 transform 就变回 none
-    const startPct = paperOffsetPct(paperElement);
-    setPaperHidden(false); // 起始帧已经盖住纸面，预置隐藏可以撤了
-    return runSheetFeed(startPct, 0, false);
-  }
-
-  /** 吸入：反向走纸，把纸整张收回打印机 */
-  function retractPaper(): Promise<boolean> {
-    // 从当前位置出发，所以上一段没跑完也能接上
-    return runSheetFeed(paperOffsetPct(paperElement), -100, true);
-  }
-
-  /** 吸入旧页，然后重发这次导航，由 afterNavigate 接着把新页滑出来 */
-  async function retractThenNavigate(target: URL) {
-    retracting = true;
-    try {
-      // 中途被打断说明有别的链接接管了导航，这次就不重发了
-      if (!(await retractPaper())) return;
-      await goto(target.href);
-    } catch (error) {
-      // 导航没能完成时把纸放回来，否则整页会一直藏在出纸口后面
-      setPaperHidden(false);
-      console.error("页面切换失败，已恢复纸张显示", error);
-    } finally {
-      retracting = false;
-    }
-  }
-
-  beforeNavigate((navigation) => {
-    if (retracting || !navigation.to || navigation.willUnload) return;
-    if (navigation.type !== "link" && navigation.type !== "goto") return;
-    if (!paperElement || prefersReducedMotion()) return;
-
-    // 同一条路由只换 query/hash（后台筛选、页内锚点）不动画，保持即时响应
-    const target = navigation.to.url;
-    if (target.pathname === page.url.pathname) return;
-
-    navigation.cancel();
-    void retractThenNavigate(target);
-  });
 
   afterNavigate((navigation) => {
     pendingNavHref = null;
-    // 这些情况不走纸：前进/后退（保留浏览器原生的即时切换与滚动位置恢复）、
-    // 纸张还完整露在外面（说明这次导航没经过吸入，例如点了当前页的链接，
-    // 再走一次滑出只会让纸凭空弹回出纸口里）
-    if (
-      navigation.type === "popstate" ||
-      !paperElement ||
-      prefersReducedMotion() ||
-      paperOffsetPct(paperElement) > -0.5
-    ) {
-      setPaperHidden(false);
+    if (navigation.type === "enter" || !paperElement || prefersReducedMotion())
       return;
-    }
-    void feedOutPaper();
+
+    paperElement.animate(generatePaperFeedKeyframes(), {
+      duration: 700 + Math.random() * 400,
+      easing: "linear",
+      fill: "backwards",
+    });
   });
 
   // Keep the indicator light's pulse in sync with wall-clock time so it
@@ -527,12 +450,12 @@
             {/each}
           </div>
 
-          <div class="printer-content-area flex-1 px-6 sm:px-10 py-8 relative z-10">
+          <div class="printer-content-area flex-1 px-10 py-8 relative z-10">
             {@render children()}
           </div>
 
           <div
-            class="px-6 sm:px-10 py-6 mt-4 border-t border-dashed border-printer-ink/10 dark:border-printer-ink-dark/10 relative z-10"
+            class="px-10 py-6 mt-4 border-t border-dashed border-printer-ink/10 dark:border-printer-ink-dark/10 relative z-10"
           >
             <div
               class="flex flex-col sm:flex-row items-center justify-between gap-4 text-printer-ink-light dark:text-printer-ink-dark/40"

@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 30 Conclusion and Future Directions"
+title: "Chapter 30 Conclusion and Future Directions"
 slug: "hitchhiker-agentic-ai-30-conclusion-and-future-directions"
 lang: "en"
 date: "2026-09-16T00:31:00.000Z"

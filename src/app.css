@@ -115,11 +115,6 @@
     color: var(--color-printer-paper-dark);
   }
 
-  /* app.html 预置的走纸起点：JS 启动前先把纸藏在出纸口内侧，避免首屏闪出完整页面 */
-  :root.paper-preload .printer-paper-sheet {
-    transform: translateY(-100%);
-  }
-
   /* 出纸缝：机身下方的独立元素，高度 = 缝以上的壳面 7px + 缝的上沿 1px。
      滚动时先随机身一起上移，到视口顶部后就钉住不动，纸张从它身后上滑，
      看起来像打印机在回收纸张。
@@ -485,8 +480,7 @@
     opacity: 0.12;
   }
 
-  /* dither 像素画层（DitherImage.svelte）：
-     纸色打底 + 橙墨填块（热敏打印风），hover 时淡出显影成真图 */
+  /* 列表缩略图：直接铺封面原图，不做抖动遮盖 */
   .post-thumb-layer {
     position: absolute;
     inset: 0;
@@ -494,23 +488,13 @@
     height: 100%;
     object-fit: cover;
   }
-  .post-thumb-veil,
   .post-cover-veil {
     --dither-paper: #fffef9;
     --dither-ink: #ff6b35; /* 网站橙色墨 */
   }
-  .post-thumb-veil {
-    opacity: 1;
-    transition: opacity 300ms var(--ease-swift);
-  }
-  :is(.dark) .post-thumb-veil,
   :is(.dark) .post-cover-veil {
     --dither-paper: #181b22;
     --dither-ink: #ff8c5a;
-  }
-  a:hover .post-thumb-veil,
-  a:focus-visible .post-thumb-veil {
-    opacity: 0;
   }
 
   /* 点线引导线：标题与日期之间的印刷目录线 */
@@ -871,7 +855,6 @@
     transform: scale(1.02);
   }
   @media (prefers-reduced-motion: reduce) {
-    .post-thumb-veil,
     .post-toc-utility,
     .post-toc-tick,
     .post-cover-frame,

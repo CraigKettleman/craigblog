@@ -1,16 +1,12 @@
 <script lang="ts">
   /**
    * 按 CaliCastle/cali.so 的 components/dither-veil.tsx 移植（无音效）：
-   * - mode="dither"：整幅 Bayer 有序抖动画，hover 淡出显影成照片（列表缩略图）
-   * - mode="collage"：入场时 voronoi 色块按莫尔斯节律闪烁一次（reduced-motion 跳过），
-   *   之后点击在「照片 ⇄ 整幅抖动画」之间做 Bayer 溶解切换（16 阈值步进、可打断）
+   * 入场时 voronoi 色块按莫尔斯节律闪烁一次（reduced-motion 跳过），
+   * 之后点击在「照片 ⇄ 整幅抖动画」之间做 Bayer 溶解切换（16 阈值步进、可打断）。
+   * 列表缩略图不再使用遮盖，这个组件只服务于文章内的封面。
    * 墨色/纸色由 --dither-ink / --dither-paper 提供（见 app.css）。
    */
-  let {
-    src,
-    alt = "",
-    mode = "dither",
-  }: { src: string; alt?: string; mode?: "dither" | "collage" } = $props();
+  let { src, alt = "" }: { src: string; alt?: string } = $props();
 
   let canvas: HTMLCanvasElement | undefined = $state();
   let img: HTMLImageElement | undefined = $state();
@@ -334,10 +330,6 @@
     function render(): boolean {
       const rect = canvasEl.getBoundingClientRect();
       if (rect.width < 4) return true;
-      if (mode === "dither") {
-        sizeCanvas(rect);
-        return drawDitherFull(rect);
-      }
       const first = !prepared;
       sizeCanvas(rect);
       prepare(rect);
@@ -382,12 +374,10 @@
 
     // collage：点击封面切换照片 ⇄ 抖动画
     let host: HTMLElement | undefined;
-    if (mode === "collage") {
-      host = canvasEl.closest<HTMLElement>(".post-cover-frame") ?? undefined;
-      if (host) {
-        host.addEventListener("click", onToggle);
-        host.style.cursor = "pointer";
-      }
+    host = canvasEl.closest<HTMLElement>(".post-cover-frame") ?? undefined;
+    if (host) {
+      host.addEventListener("click", onToggle);
+      host.style.cursor = "pointer";
     }
 
     return () => {
@@ -402,14 +392,5 @@
   });
 </script>
 
-{#if mode === "collage"}
-  <img bind:this={img} {src} {alt} class="post-cover-img" />
-  <canvas bind:this={canvas} class="post-cover-veil" aria-hidden="true"></canvas>
-{:else}
-  <img bind:this={img} {src} {alt} loading="lazy" class="post-thumb-layer" />
-  <canvas
-    bind:this={canvas}
-    class="post-thumb-layer post-thumb-veil"
-    aria-hidden="true"
-  ></canvas>
-{/if}
+<img bind:this={img} {src} {alt} class="post-cover-img" />
+<canvas bind:this={canvas} class="post-cover-veil" aria-hidden="true"></canvas>

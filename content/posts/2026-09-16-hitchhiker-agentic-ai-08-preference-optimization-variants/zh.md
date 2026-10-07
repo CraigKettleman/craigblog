@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 8 章 偏好优化变体"
+title: "第 8 章 偏好优化变体"
 slug: "hitchhiker-agentic-ai-08-preference-optimization-variants"
 lang: "zh"
 date: "2026-09-16T00:09:00.000Z"
@@ -292,7 +292,7 @@ trainer.train()
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 9 章 奖励模型训练</p>
+<p class="hh-next-title">第 9 章 奖励模型训练</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

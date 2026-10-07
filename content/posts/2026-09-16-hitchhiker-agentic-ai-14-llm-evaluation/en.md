@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 14 LLM Evaluation"
+title: "Chapter 14 LLM Evaluation"
 slug: "hitchhiker-agentic-ai-14-llm-evaluation"
 lang: "en"
 date: "2026-09-16T00:15:00.000Z"
@@ -420,7 +420,7 @@ Evaluation prompts are often shorter, cleaner, and more well-formed than real us
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 15 Introduction to Agentic AI</p>
+<p class="hh-next-title">Chapter 15 Introduction to Agentic AI</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

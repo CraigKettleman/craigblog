@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 9 Reward Model Training"
+title: "Chapter 9 Reward Model Training"
 slug: "hitchhiker-agentic-ai-09-reward-model-training"
 lang: "en"
 date: "2026-09-16T00:10:00.000Z"
@@ -89,7 +89,7 @@ The Plackett-Luce (PL) model [291] is the standard extension of Bradley-Terry t
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 10 SFT Best Practices and Techniques</p>
+<p class="hh-next-title">Chapter 10 SFT Best Practices and Techniques</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

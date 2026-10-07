@@ -7,12 +7,16 @@
 vite.config.ts.timestamp-*
 
 # Velite (generated content data + copied assets)
+# 数据目录与软链接：正式入口是 .velite / static/blog，真实内容放在 -a/-b 两个槽位里轮换，
+# .swap 是原子换入用的临时软链接
 /.velite
-/.velite-next
-/.velite.prev
+/.velite-a
+/.velite-b
+/.velite.swap
 /static/blog
-/static/blog-next
-/static/blog.prev
+/static/blog-a
+/static/blog-b
+/static/blog.swap
 
 # misc
 .DS_Store

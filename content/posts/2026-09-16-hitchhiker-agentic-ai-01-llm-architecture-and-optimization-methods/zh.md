@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 1 章 LLM 架构与优化方法"
+title: "第 1 章 LLM 架构与优化方法"
 slug: "hitchhiker-agentic-ai-01-llm-architecture-and-optimization-methods"
 lang: "zh"
 date: "2026-09-16T00:02:00.000Z"
@@ -1446,7 +1446,7 @@ Chuang 等人 [58] 观察到事实知识在 Transformer 较深的层中浮现，
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 2 章 面向 LLM 的系统基础</p>
+<p class="hh-next-title">第 2 章 面向 LLM 的系统基础</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

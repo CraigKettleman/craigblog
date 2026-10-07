@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 16 章 检索增强生成（RAG）"
+title: "第 16 章 检索增强生成（RAG）"
 slug: "hitchhiker-agentic-ai-16-retrieval-augmented-generation-rag"
 lang: "zh"
 date: "2026-09-16T00:17:00.000Z"
@@ -816,7 +816,7 @@ RAFT [425] 训练模型在混合了相关文档与<em>干扰</em>文档的情况
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 17 章 智能体记忆系统</p>
+<p class="hh-next-title">第 17 章 智能体记忆系统</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

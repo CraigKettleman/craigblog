@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 19 Loop Engineering"
+title: "Chapter 19 Loop Engineering"
 slug: "hitchhiker-agentic-ai-19-loop-engineering"
 lang: "en"
 date: "2026-09-16T00:20:00.000Z"
@@ -288,7 +288,7 @@ Loop engineering represents the current frontier of human–agent collaboration:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 20 Agent Design Patterns</p>
+<p class="hh-next-title">Chapter 20 Agent Design Patterns</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

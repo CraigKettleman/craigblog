@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 19 章 循环工程（Loop Engineering）"
+title: "第 19 章 循环工程（Loop Engineering）"
 slug: "hitchhiker-agentic-ai-19-loop-engineering"
 lang: "zh"
 date: "2026-09-16T00:20:00.000Z"
@@ -288,7 +288,7 @@ def should_compact(state: LoopState) -> bool:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 20 章 Agent 设计模式</p>
+<p class="hh-next-title">第 20 章 Agent 设计模式</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 26 Agent Development Frameworks"
+title: "Chapter 26 Agent Development Frameworks"
 slug: "hitchhiker-agentic-ai-26-agent-development-frameworks"
 lang: "en"
 date: "2026-09-16T00:27:00.000Z"
@@ -1601,7 +1601,7 @@ The field is evolving rapidly, with new frameworks, tools, and best practices em
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 27 Agentic UI Frameworks</p>
+<p class="hh-next-title">Chapter 27 Agentic UI Frameworks</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

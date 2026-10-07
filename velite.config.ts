@@ -149,17 +149,11 @@ const posts = defineCollection({
 export default defineConfig({
   root: "content",
   output: {
-    data: ".velite",
-    assets: "static/blog",
+    data: process.env.VELITE_DATA_SLOT || ".velite",
+    assets: process.env.VELITE_ASSET_SLOT || "static/blog",
     base: "/blog/",
     name: "[name]-[hash:6].[ext]",
     clean: true,
-    // VELITE_STAGING=1 时构建到临时目录：deploy 的全量构建与本机 dev server
-    // 并发运行，直接清空 .velite 会让 dev SSR 撞上中间态（site.json 缺失）。
-    // 构建成功后由 vite 插件原子换入，失败则旧数据原封不动。
-    ...(process.env.VELITE_STAGING === "1"
-      ? { data: ".velite-next", assets: "static/blog-next" }
-      : {}),
   },
   collections: { site, categories, posts },
   markdown: {

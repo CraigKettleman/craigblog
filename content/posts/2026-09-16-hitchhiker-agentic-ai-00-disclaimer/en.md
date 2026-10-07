@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Disclaimer"
+title: "Disclaimer"
 slug: "hitchhiker-agentic-ai-00-disclaimer"
 lang: "en"
 date: "2026-09-16T00:00:00.000Z"

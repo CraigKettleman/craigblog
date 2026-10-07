@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 免责声明"
+title: "免责声明"
 slug: "hitchhiker-agentic-ai-00-disclaimer"
 lang: "zh"
 date: "2026-09-16T00:00:00.000Z"

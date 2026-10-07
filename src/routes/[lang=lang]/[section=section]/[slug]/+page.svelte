@@ -165,7 +165,7 @@
   ]}
 />
 
-<div class="mx-auto w-full max-w-[37.5rem]">
+<div class="w-full">
   <!-- Post header -->
   <PrintedSection>
     {#if editing}
@@ -227,7 +227,7 @@
       <!-- 拍立得封面：collage 模式 —— 入场 voronoi 闪烁，点击在照片 ⇄ 抖动画间切换 -->
       <figure class="post-cover-frame">
         <span class="post-cover-photo">
-          <DitherImage src={post.cover.src} mode="collage" alt={post.title} />
+          <DitherImage src={post.cover.src} alt={post.title} />
         </span>
         <figcaption
           class="truncate font-mono text-[9px] uppercase tracking-wider text-printer-ink-light dark:text-printer-ink-dark/40"

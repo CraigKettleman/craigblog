@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 6 DPO — Direct Preference Optimization"
+title: "Chapter 6 DPO — Direct Preference Optimization"
 slug: "hitchhiker-agentic-ai-06-dpo-direct-preference-optimization"
 lang: "en"
 date: "2026-09-16T00:07:00.000Z"
@@ -294,7 +294,7 @@ where <math alttext="\gamma&gt;0" display="inline"><semantics><mrow><mi>γ</mi><
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 7 GRPO — Group Relative Policy Optimization</p>
+<p class="hh-next-title">Chapter 7 GRPO — Group Relative Policy Optimization</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

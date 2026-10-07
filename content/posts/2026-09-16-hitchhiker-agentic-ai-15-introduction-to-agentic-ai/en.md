@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 15 Introduction to Agentic AI"
+title: "Chapter 15 Introduction to Agentic AI"
 slug: "hitchhiker-agentic-ai-15-introduction-to-agentic-ai"
 lang: "en"
 date: "2026-09-16T00:16:00.000Z"
@@ -47,7 +47,7 @@ Throughout, we maintain the systems perspective: agentic AI is not just about pr
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 16 Retrieval-Augmented Generation (RAG)</p>
+<p class="hh-next-title">Chapter 16 Retrieval-Augmented Generation (RAG)</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

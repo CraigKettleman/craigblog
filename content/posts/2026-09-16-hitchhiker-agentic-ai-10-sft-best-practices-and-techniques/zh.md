@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 10 章 SFT 最佳实践与技巧"
+title: "第 10 章 SFT 最佳实践与技巧"
 slug: "hitchhiker-agentic-ai-10-sft-best-practices-and-techniques"
 lang: "zh"
 date: "2026-09-16T00:11:00.000Z"
@@ -129,7 +129,7 @@ template = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 11 章 大规模系统架构与基础设施</p>
+<p class="hh-next-title">第 11 章 大规模系统架构与基础设施</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

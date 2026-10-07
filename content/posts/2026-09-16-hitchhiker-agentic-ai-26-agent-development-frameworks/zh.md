@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 26 章 Agent 开发框架"
+title: "第 26 章 Agent 开发框架"
 slug: "hitchhiker-agentic-ai-26-agent-development-frameworks"
 lang: "zh"
 date: "2026-09-16T00:27:00.000Z"
@@ -1601,7 +1601,7 @@ Agent 开发框架已显著成熟，为构建生产级 AI Agent 所面临的工�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 27 章 Agentic UI 框架</p>
+<p class="hh-next-title">第 27 章 Agentic UI 框架</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 27 Agentic UI Frameworks"
+title: "Chapter 27 Agentic UI Frameworks"
 slug: "hitchhiker-agentic-ai-27-agentic-ui-frameworks"
 lang: "en"
 date: "2026-09-16T00:28:00.000Z"
@@ -794,7 +794,7 @@ The frameworks and patterns described in this section—Vercel AI SDK, Chainlit,
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 28 Quiz Questions & Detailed Answers</p>
+<p class="hh-next-title">Chapter 28 Quiz Questions & Detailed Answers</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

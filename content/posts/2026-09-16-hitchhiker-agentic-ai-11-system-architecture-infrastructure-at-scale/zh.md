@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 11 章 大规模系统架构与基础设施"
+title: "第 11 章 大规模系统架构与基础设施"
 slug: "hitchhiker-agentic-ai-11-system-architecture-infrastructure-at-scale"
 lang: "zh"
 date: "2026-09-16T00:12:00.000Z"
@@ -501,7 +501,7 @@ Miles [295] 是 PyTorch 官方的大规模 LLM RL 技术栈，把 SGLang（用�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 12 章 LLM 智能体训练</p>
+<p class="hh-next-title">第 12 章 LLM 智能体训练</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

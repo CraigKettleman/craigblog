@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 27 章 Agentic UI 框架"
+title: "第 27 章 Agentic UI 框架"
 slug: "hitchhiker-agentic-ai-27-agentic-ui-frameworks"
 lang: "zh"
 date: "2026-09-16T00:28:00.000Z"
@@ -794,7 +794,7 @@ Agent 化 UI 框架代表着人机交互的新前沿，要求从第一性原理�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 28 章 测验题与详细解答</p>
+<p class="hh-next-title">第 28 章 测验题与详细解答</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

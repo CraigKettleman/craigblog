@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 29 Quick Reference"
+title: "Chapter 29 Quick Reference"
 slug: "hitchhiker-agentic-ai-29-quick-reference"
 lang: "en"
 date: "2026-09-16T00:30:00.000Z"
@@ -133,7 +133,7 @@ BenchmarkDomainMetricSOTA (2025)SWE-bench VerifiedSoftware engineering% resolved
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 30 Conclusion and Future Directions</p>
+<p class="hh-next-title">Chapter 30 Conclusion and Future Directions</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

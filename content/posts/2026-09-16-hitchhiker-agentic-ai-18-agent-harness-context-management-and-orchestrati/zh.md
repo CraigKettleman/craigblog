@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 18 章 Agent Harness ——上下文管理与编排"
+title: "第 18 章 Agent Harness ——上下文管理与编排"
 slug: "hitchhiker-agentic-ai-18-agent-harness-context-management-and-orchestrati"
 lang: "zh"
 date: "2026-09-16T00:19:00.000Z"
@@ -831,7 +831,7 @@ if __name__ == "__main__":
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 19 章 循环工程（Loop Engineering）</p>
+<p class="hh-next-title">第 19 章 循环工程（Loop Engineering）</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 28 Quiz Questions & Detailed Answers"
+title: "Chapter 28 Quiz Questions & Detailed Answers"
 slug: "hitchhiker-agentic-ai-28-quiz-questions-detailed-answers"
 lang: "en"
 date: "2026-09-16T00:29:00.000Z"
@@ -954,7 +954,7 @@ This chapter provides a comprehensive set of questions designed to test and rein
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 29 Quick Reference</p>
+<p class="hh-next-title">Chapter 29 Quick Reference</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

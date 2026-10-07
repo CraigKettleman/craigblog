@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 7 GRPO — Group Relative Policy Optimization"
+title: "Chapter 7 GRPO — Group Relative Policy Optimization"
 slug: "hitchhiker-agentic-ai-07-grpo-group-relative-policy-optimization"
 lang: "en"
 date: "2026-09-16T00:08:00.000Z"
@@ -290,7 +290,7 @@ Empirical gains (over GRPO on non-verifiable tasks):
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 8 Preference Optimization Variants</p>
+<p class="hh-next-title">Chapter 8 Preference Optimization Variants</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

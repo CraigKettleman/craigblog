@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 23 Agent Skills"
+title: "Chapter 23 Agent Skills"
 slug: "hitchhiker-agentic-ai-23-agent-skills"
 lang: "en"
 date: "2026-09-16T00:24:00.000Z"
@@ -124,7 +124,7 @@ In practice, the two approaches are complementary: fine-tuning provides <em>base
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 24 Agent-to-Agent Communication (A2A)</p>
+<p class="hh-next-title">Chapter 24 Agent-to-Agent Communication (A2A)</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

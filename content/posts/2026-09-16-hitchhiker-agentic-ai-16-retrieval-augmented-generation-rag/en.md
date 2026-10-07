@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 16 Retrieval-Augmented Generation (RAG)"
+title: "Chapter 16 Retrieval-Augmented Generation (RAG)"
 slug: "hitchhiker-agentic-ai-16-retrieval-augmented-generation-rag"
 lang: "en"
 date: "2026-09-16T00:17:00.000Z"
@@ -816,7 +816,7 @@ The retriever parameters <math alttext="\phi" display="inline"><semantics><mi>ϕ
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 17 Agentic Memory Systems</p>
+<p class="hh-next-title">Chapter 17 Agentic Memory Systems</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 25 章 多智能体系统（Multi-Agent Systems）"
+title: "第 25 章 多智能体系统（Multi-Agent Systems）"
 slug: "hitchhiker-agentic-ai-25-multi-agent-systems"
 lang: "zh"
 date: "2026-09-16T00:26:00.000Z"
@@ -661,7 +661,7 @@ class SoftwareDevelopmentTeam:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 26 章 Agent 开发框架</p>
+<p class="hh-next-title">第 26 章 Agent 开发框架</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

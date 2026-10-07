@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 17 Agentic Memory Systems"
+title: "Chapter 17 Agentic Memory Systems"
 slug: "hitchhiker-agentic-ai-17-agentic-memory-systems"
 lang: "en"
 date: "2026-09-16T00:18:00.000Z"
@@ -915,7 +915,7 @@ The field is rapidly evolving. Key open challenges include: (1) <em>memory groun
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 18 Agent Harness – Context Management and…</p>
+<p class="hh-next-title">Chapter 18 Agent Harness – Context Management and…</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

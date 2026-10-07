@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 1 LLM Architecture and Optimization Methods"
+title: "Chapter 1 LLM Architecture and Optimization Methods"
 slug: "hitchhiker-agentic-ai-01-llm-architecture-and-optimization-methods"
 lang: "en"
 date: "2026-09-16T00:02:00.000Z"
@@ -1446,7 +1446,7 @@ Safety is not an afterthought—it is an integral part of the LLM training pipel
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 2 Systems Foundations for LLMs</p>
+<p class="hh-next-title">Chapter 2 Systems Foundations for LLMs</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

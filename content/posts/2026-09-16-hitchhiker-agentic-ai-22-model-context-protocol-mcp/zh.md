@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 22 章 模型上下文协议（Model Context Protocol, MCP）"
+title: "第 22 章 模型上下文协议（Model Context Protocol, MCP）"
 slug: "hitchhiker-agentic-ai-22-model-context-protocol-mcp"
 lang: "zh"
 date: "2026-09-16T00:23:00.000Z"
@@ -805,7 +805,7 @@ def trajectory_to_sft_example(traj: Trajectory) -> dict:
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 23 章 Agent Skills</p>
+<p class="hh-next-title">第 23 章 Agent Skills</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

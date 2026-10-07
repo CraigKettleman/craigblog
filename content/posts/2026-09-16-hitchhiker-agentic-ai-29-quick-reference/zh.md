@@ -1,5 +1,5 @@
 ---
-title: "智能体 AI 漫游指南 · 第 29 章 速查手册"
+title: "第 29 章 速查手册"
 slug: "hitchhiker-agentic-ai-29-quick-reference"
 lang: "zh"
 date: "2026-09-16T00:30:00.000Z"
@@ -133,7 +133,7 @@ Trainer方法关键配置数据格式<code>SFTTrainer</code>监督微调（SFT�
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">智能体 AI 漫游指南 · 第 30 章 总结与未来方向</p>
+<p class="hh-next-title">第 30 章 总结与未来方向</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

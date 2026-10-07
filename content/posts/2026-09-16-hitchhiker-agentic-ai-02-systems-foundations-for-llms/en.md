@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 2 Systems Foundations for LLMs"
+title: "Chapter 2 Systems Foundations for LLMs"
 slug: "hitchhiker-agentic-ai-02-systems-foundations-for-llms"
 lang: "en"
 date: "2026-09-16T00:03:00.000Z"
@@ -224,7 +224,7 @@ Dynamo [270] is NVIDIA’s open-source orchestration layer that sits <em>above<
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 3 Introduction to Reinforcement Learning</p>
+<p class="hh-next-title">Chapter 3 Introduction to Reinforcement Learning</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

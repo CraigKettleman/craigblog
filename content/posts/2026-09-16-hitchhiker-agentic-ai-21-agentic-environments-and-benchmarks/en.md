@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 21 Agentic Environments and Benchmarks"
+title: "Chapter 21 Agentic Environments and Benchmarks"
 slug: "hitchhiker-agentic-ai-21-agentic-environments-and-benchmarks"
 lang: "en"
 date: "2026-09-16T00:22:00.000Z"
@@ -549,7 +549,7 @@ Long-Horizon-Terminal-Bench [386] spans 46 complex tasks across 21 domains, tes
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 22 Model Context Protocol (MCP)</p>
+<p class="hh-next-title">Chapter 22 Model Context Protocol (MCP)</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 

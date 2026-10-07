@@ -1,5 +1,5 @@
 ---
-title: "The Hitchhiker's Guide to Agentic AI · Chapter 20 Agent Design Patterns"
+title: "Chapter 20 Agent Design Patterns"
 slug: "hitchhiker-agentic-ai-20-agent-design-patterns"
 lang: "en"
 date: "2026-09-16T00:21:00.000Z"
@@ -123,7 +123,7 @@ Patterns are composable: a planning agent may use prompt chaining for individual
 
 <aside class="hh-next">
 <p class="hh-next-label">下一篇</p>
-<p class="hh-next-title">The Hitchhiker's Guide to Agentic AI · Chapter 21 Agentic Environments and Benchmarks</p>
+<p class="hh-next-title">Chapter 21 Agentic Environments and Benchmarks</p>
 <p class="hh-next-hint">在「智能体 AI 漫游指南」分类下继续阅读。</p>
 </aside>
 
